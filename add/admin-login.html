@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ thống Quản trị | 2026_!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { background: #020617; font-family: 'Outfit', sans-serif; height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .admin-box { background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); width: 400px; padding: 40px; border-radius: 40px; }
+    </style>
+</head>
+<body>
+    <div class="admin-box text-center">
+        <div class="w-16 h-16 bg-cyan-500 rounded-2xl mx-auto mb-6 flex items-center justify-center shadow-[0_0_30px_rgba(6,182,212,0.5)]">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+        </div>
+        <h2 class="text-3xl font-black text-white mb-2 uppercase italic tracking-tighter">Admin <span class="text-cyan-400">Portal</span></h2>
+        <p class="text-slate-500 text-xs font-bold mb-10 uppercase tracking-widest">Hệ thống quản lý 2026_!</p>
+        
+        <form id="admin-form" class="space-y-4">
+            <input type="email" id="email" placeholder="Email Quản trị" class="w-full bg-white/5 border border-white/10 px-6 py-4 rounded-2xl text-white outline-none focus:border-cyan-500 transition-all" required>
+            <input type="password" id="password" placeholder="Mật khẩu" class="w-full bg-white/5 border border-white/10 px-6 py-4 rounded-2xl text-white outline-none focus:border-cyan-500 transition-all" required>
+            <button type="submit" class="w-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black py-4 rounded-2xl shadow-lg transition-all uppercase tracking-widest mt-4">Xác nhận đăng nhập</button>
+        </form>
+        
+        <p class="mt-8 text-slate-600 text-[10px] uppercase font-bold tracking-widest">Truy cập bị hạn chế - Chỉ dành cho nhân viên</p>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        const form = document.getElementById('admin-form');
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            const res = await fetch(`${API_URL}/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+
+            if (res.ok) {
+                const user = await res.json();
+                if (user.role === 'admin') {
+                    localStorage.setItem(SESSION_KEY, JSON.stringify(user));
+                    window.location.href = 'admin.html';
+                } else {
+                    alert('Bạn không có quyền truy cập hệ thống quản trị!');
+                }
+            } else {
+                alert('Sai tài khoản hoặc mật khẩu quản trị!');
+            }
+        };
+    </script>
+</body>
+</html>

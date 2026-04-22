@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký thành viên | 2026_!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { background: #020617; font-family: 'Outfit', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .auth-box { background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); width: 450px; padding: 50px; border-radius: 40px; }
+    </style>
+</head>
+<body>
+    <div class="auth-box text-center">
+        <div class="w-16 h-16 bg-gradient-to-br from-cyan-400 to-purple-600 rounded-2xl mx-auto mb-6 flex items-center justify-center rotate-6 shadow-[0_0_30px_rgba(34,211,238,0.3)]">
+            <span class="text-white font-black text-2xl italic">26</span>
+        </div>
+        <h2 class="text-4xl font-black text-white mb-2 italic tracking-tighter">ĐĂNG KÝ</h2>
+        <p class="text-slate-500 text-[10px] font-bold mb-10 uppercase tracking-[0.2em]">Tham gia cộng đồng 2026_! Premium</p>
+        
+        <form id="register-form" class="space-y-4 text-left">
+            <div class="space-y-1">
+                <label class="text-[9px] font-black uppercase tracking-widest text-slate-500 ml-4">Họ và tên</label>
+                <input type="text" id="name" placeholder="Nguyễn Văn A" class="w-full bg-white/5 border border-white/10 px-6 py-4 rounded-2xl text-white outline-none focus:border-cyan-500 transition-all" required>
+            </div>
+            <div class="space-y-1">
+                <label class="text-[9px] font-black uppercase tracking-widest text-slate-500 ml-4">Email của bạn</label>
+                <input type="email" id="email" placeholder="email@vi-du.com" class="w-full bg-white/5 border border-white/10 px-6 py-4 rounded-2xl text-white outline-none focus:border-cyan-500 transition-all" required>
+            </div>
+            <div class="space-y-1">
+                <label class="text-[9px] font-black uppercase tracking-widest text-slate-500 ml-4">Mật khẩu</label>
+                <input type="password" id="password" placeholder="••••••••" class="w-full bg-white/5 border border-white/10 px-6 py-4 rounded-2xl text-white outline-none focus:border-cyan-500 transition-all" required>
+            </div>
+            <button type="submit" class="w-full bg-white text-slate-950 font-black py-4 rounded-2xl shadow-xl hover:bg-cyan-400 transition-all uppercase tracking-widest mt-6">Tạo tài khoản</button>
+        </form>
+        
+        <p class="mt-8 text-slate-400 text-xs">Đã có tài khoản? <a href="user-login.html" class="text-cyan-400 font-bold hover:underline">Đăng nhập ngay</a></p>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        document.getElementById('register-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            if (await register(email, password, name)) {
+                alert('Đăng ký thành công! Hãy đăng nhập để mua sắm.');
+                window.location.href = 'user-login.html';
+            } else {
+                alert('Email này đã được sử dụng!');
+            }
+        };
+    </script>
+</body>
+</html>

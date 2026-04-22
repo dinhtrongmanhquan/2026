@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập | 2026_! Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="bg-slate-950 text-white min-h-screen flex items-center justify-center p-6">
+    <div class="bg-mesh"></div>
+
+    <div class="glass max-w-md w-full p-10 rounded-[3rem] border border-white/10 relative z-10">
+        <div class="text-center mb-10">
+            <div class="w-16 h-16 bg-gradient-to-br from-cyan-400 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6 rotate-6 shadow-[0_0_30px_rgba(34,211,238,0.3)]">
+                <span class="text-white font-black text-2xl italic">26</span>
+            </div>
+            <h1 class="text-4xl font-black tracking-tighter gradient-text" id="auth-title">ĐĂNG NHẬP</h1>
+            <p class="text-slate-500 text-xs font-bold uppercase tracking-widest mt-2" id="auth-subtitle">Thành viên 2026_! Store</p>
+        </div>
+
+        <form id="auth-form" class="space-y-6">
+            <div class="space-y-2">
+                <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-2">Email</label>
+                <input type="email" id="email" placeholder="email@cua-ban.com" class="input-premium w-full" required>
+            </div>
+            <div class="space-y-2">
+                <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-2">Mật khẩu</label>
+                <input type="password" id="password" placeholder="••••••••" class="input-premium w-full" required>
+            </div>
+            
+            <button type="submit" class="btn-premium w-full py-5 text-sm">Xác nhận</button>
+        </form>
+
+        <div class="mt-8 text-center space-y-4">
+            <button onclick="toggleAuthMode()" class="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-cyan-400 transition-colors" id="toggle-btn">
+                Chưa có tài khoản? Đăng ký ngay
+            </button>
+            <div class="pt-4 border-t border-white/5">
+                <a href="admin-login.html" class="text-[9px] font-black uppercase tracking-[0.2em] text-slate-600 hover:text-white transition-colors italic">Dành cho Quản trị viên</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        let isLoginMode = true;
+        const form = document.getElementById('auth-form');
+        const title = document.getElementById('auth-title');
+        const subtitle = document.getElementById('auth-subtitle');
+        const toggleBtn = document.getElementById('toggle-btn');
+
+        function toggleAuthMode() {
+            isLoginMode = !isLoginMode;
+            title.innerText = isLoginMode ? 'ĐĂNG NHẬP' : 'ĐĂNG KÝ';
+            subtitle.innerText = isLoginMode ? 'Thành viên 2026_! Store' : 'Tham gia cùng chúng tôi';
+            toggleBtn.innerText = isLoginMode ? 'Chưa có tài khoản? Đăng ký ngay' : 'Đã có tài khoản? Đăng nhập';
+        }
+
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            if (isLoginMode) {
+                const user = await login(email, password);
+                if (user) {
+                    // Nếu là admin thì vẫn cho vào admin, khách thì về home
+                    if (user.role === 'admin') {
+                        window.location.href = 'admin.html';
+                    } else {
+                        window.location.href = 'index.html';
+                    }
+                } else {
+                    alert('Sai email hoặc mật khẩu!');
+                }
+            } else {
+                if (await register(email, password)) {
+                    alert('Đăng ký thành công! Hãy đăng nhập.');
+                    toggleAuthMode();
+                } else {
+                    alert('Email đã tồn tại!');
+                }
+            }
+        };
+    </script>
+</body>
+</html>

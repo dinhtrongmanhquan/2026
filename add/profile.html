@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hồ sơ của tôi | 2026_!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-950 text-white min-h-screen">
+    <div class="bg-mesh"></div>
+
+    <!-- Navigation (Simplified) -->
+    <nav class="p-6 glass-nav sticky top-0 z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <div onclick="window.location.href='index.html'" class="flex items-center space-x-3 cursor-pointer group">
+                <div class="w-10 h-10 bg-gradient-to-br from-cyan-400 to-purple-600 rounded-lg flex items-center justify-center rotate-3 group-hover:rotate-12 transition-transform duration-500">
+                    <span class="text-white font-black text-xl italic">26</span>
+                </div>
+                <h1 class="text-2xl font-black tracking-tighter gradient-text">2026_!</h1>
+            </div>
+            <button onclick="logout()" class="text-[10px] font-black uppercase tracking-widest text-red-500 hover:text-white transition-colors">Đăng xuất</button>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-6 py-20">
+        <div class="flex flex-col lg:flex-row gap-12">
+            <!-- User Info Card -->
+            <aside class="lg:w-1/3">
+                <div class="glass p-10 rounded-[3rem] border border-white/10 text-center sticky top-32">
+                    <div class="w-32 h-32 mx-auto mb-8 relative group" onclick="changeAvatar()">
+                        <img id="user-avatar" src="" class="w-full h-full rounded-2xl border-2 border-cyan-500 shadow-[0_0_30px_rgba(6,182,212,0.3)] object-cover cursor-pointer">
+                        <div class="absolute inset-0 bg-slate-900/60 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer border border-cyan-500/50">
+                            <svg class="w-8 h-8 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        </div>
+                    </div>
+                    <h2 id="user-name-display" class="text-3xl font-black mb-2 gradient-text">...</h2>
+                    <p id="user-email-display" class="text-slate-500 font-bold mb-8 uppercase text-[10px] tracking-widest">...</p>
+                    
+                    <div class="pt-8 border-t border-white/5 space-y-4">
+                        <div class="flex justify-between text-xs font-bold uppercase tracking-widest">
+                            <span class="text-slate-500">Ngày tham gia</span>
+                            <span id="user-joined-display" class="text-white">...</span>
+                        </div>
+                        <div class="flex justify-between text-xs font-bold uppercase tracking-widest">
+                            <span class="text-slate-500">Loại tài khoản</span>
+                            <span id="user-role-display" class="text-cyan-400 italic">...</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Orders Section -->
+            <section class="lg:w-2/3">
+                <h3 class="text-3xl font-black mb-10 tracking-tighter uppercase">Lịch sử <span class="gradient-text">mua hàng</span></h3>
+                <div id="order-history" class="space-y-6">
+                    <!-- Orders will be loaded here -->
+                    <div class="text-center py-20 bg-white/5 rounded-[3rem] border border-dashed border-white/10">
+                        <p class="text-slate-500 font-bold italic">Đang tải lịch sử đơn hàng...</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+        checkAuth();
+        
+        async function loadProfile() {
+            const user = getCurrentUser();
+            if (!user) return;
+
+            // Update UI
+            document.getElementById('user-avatar').src = user.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + user.email;
+            document.getElementById('user-name-display').innerText = user.name;
+            document.getElementById('user-email-display').innerText = user.email;
+            document.getElementById('user-joined-display').innerText = user.joined || 'Mới gia nhập';
+            document.getElementById('user-role-display').innerText = user.role === 'admin' ? 'Quản trị viên' : 'Thành viên';
+
+            // Load Orders from API
+            try {
+                const res = await fetch(`${API_URL}/orders/${user.email}`);
+                const orders = await res.json();
+                renderOrders(orders);
+            } catch (e) {
+                console.error('Lỗi tải đơn hàng:', e);
+            }
+        }
+
+        function renderOrders(orders) {
+            const container = document.getElementById('order-history');
+            if (!orders || orders.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-20 bg-white/5 rounded-[3rem] border border-dashed border-white/10">
+                        <p class="text-slate-500 font-bold italic">Bạn chưa có đơn hàng nào.</p>
+                        <button onclick="window.location.href='index.html'" class="mt-6 px-8 py-3 bg-cyan-500 text-slate-950 font-black rounded-full text-xs uppercase">Mua sắm ngay</button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = orders.map(order => `
+                <div class="glass p-8 rounded-[2.5rem] border border-white/10 hover:border-white/20 transition-all">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                        <div>
+                            <span class="text-[10px] font-black text-cyan-400 uppercase tracking-widest block mb-1">Mã đơn #${order.id}</span>
+                            <span class="text-white font-bold">${new Date(order.created_at).toLocaleDateString('vi-VN')}</span>
+                        </div>
+                        <div class="px-4 py-2 bg-white/5 rounded-full border border-white/10">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">${order.status}</span>
+                        </div>
+                    </div>
+                    <div class="bg-slate-950/50 p-6 rounded-2xl mb-6">
+                        <p class="text-sm leading-relaxed text-slate-300 italic">${order.details}</p>
+                    </div>
+                    <div class="flex justify-between items-center pt-6 border-t border-white/5">
+                        <span class="text-xs font-bold text-slate-500 uppercase">Tổng cộng</span>
+                        <span class="text-2xl font-black gradient-text">${order.total_price}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function changeAvatar() {
+            const user = getCurrentUser();
+            const newUrl = prompt('Dán link ảnh mới (URL) vào đây:', user.avatar);
+            
+            if (newUrl && newUrl !== user.avatar) {
+                try {
+                    const res = await fetch(`${API_URL}/users/update`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            email: user.email,
+                            name: user.name,
+                            avatar: newUrl
+                        })
+                    });
+
+                    if (res.ok) {
+                        const updatedUser = await res.json();
+                        localStorage.setItem(SESSION_KEY, JSON.stringify(updatedUser));
+                        document.getElementById('user-avatar').src = updatedUser.avatar;
+                        alert('Cập nhật ảnh đại diện thành công!');
+                        location.reload(); // Để cập nhật cả trên Menu
+                    }
+                } catch (e) {
+                    alert('Lỗi khi cập nhật ảnh!');
+                }
+            }
+        }
+
+        window.onload = loadProfile;
+    </script>
+</body>
+</html>
