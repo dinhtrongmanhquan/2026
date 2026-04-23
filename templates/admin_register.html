@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký Admin | 2026_!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f8fafc; }
+        .gradient-text {
+            background: linear-gradient(135deg, #22d3ee, #ef4444);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
+    <!-- Glow Effects -->
+    <div class="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] bg-cyan-500/10 blur-[150px] rounded-full"></div>
+    <div class="absolute bottom-[-20%] left-[-10%] w-[50%] h-[50%] bg-red-500/10 blur-[150px] rounded-full"></div>
+
+    <div class="max-w-md w-full glass-panel rounded-[3rem] overflow-hidden shadow-2xl relative z-10">
+        <div class="p-10 text-center border-b border-white/5">
+            <h1 class="text-3xl font-black italic uppercase tracking-tighter text-white">CẤP QUYỀN <span class="gradient-text">ADMIN</span></h1>
+            <p class="text-gray-500 text-[10px] mt-2 font-black uppercase tracking-[0.3em]">Đăng ký nhân sự quản trị</p>
+        </div>
+        
+        <form action="/admin/register" method="POST" class="p-10 space-y-5">
+            <div>
+                <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2 ml-2">Tên đăng nhập mới</label>
+                <input type="text" name="username" required class="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white focus:border-red-500 outline-none transition-all placeholder-gray-600" placeholder="Username...">
+            </div>
+            <div>
+                <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2 ml-2">Mật khẩu bảo mật</label>
+                <input type="password" name="password" required class="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white focus:border-red-500 outline-none transition-all placeholder-gray-600" placeholder="••••••••">
+                <p class="mt-2 text-[8px] text-gray-600 italic">* Phải có in hoa, thường, số và ký tự đặc biệt.</p>
+            </div>
+            <div>
+                <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2 ml-2">Mã bảo mật (Master Key)</label>
+                <input type="password" name="master_key" required class="w-full px-6 py-4 bg-white/5 border border-red-500/20 rounded-2xl text-white focus:border-red-500 outline-none transition-all placeholder-gray-600" placeholder="Nhập mã xác thực chủ sở hữu...">
+                <p class="mt-2 text-[8px] text-red-500/70 font-bold uppercase tracking-widest">* Liên hệ kỹ thuật để lấy mã bảo mật này.</p>
+            </div>
+            
+            {% if error %}
+            <div class="bg-red-500/10 border border-red-500/20 py-3 rounded-xl text-center">
+                <p class="text-red-400 text-[10px] font-black uppercase tracking-widest">{{ error }}</p>
+            </div>
+            {% endif %}
+            
+            {% if success %}
+            <div class="bg-emerald-500/10 border border-emerald-500/20 py-3 rounded-xl text-center">
+                <p class="text-emerald-400 text-[10px] font-black uppercase tracking-widest">{{ success }}</p>
+            </div>
+            {% endif %}
+            
+            <button type="submit" class="w-full bg-gradient-to-r from-cyan-600 to-cyan-800 hover:from-cyan-500 hover:to-cyan-700 text-white font-black py-5 rounded-2xl shadow-xl shadow-cyan-500/20 transition-all uppercase text-[11px] tracking-[0.2em] active:scale-95">
+                Kích hoạt tài khoản
+            </button>
+        </form>
+
+        <div class="px-10 pb-10 text-center space-y-4">
+            <a href="/admin/login" class="block text-red-400 hover:text-red-300 text-[10px] font-black uppercase tracking-widest transition-all">Đã có quyền? Đăng nhập ngay</a>
+        </div>
+    </div>
+</body>
+</html>

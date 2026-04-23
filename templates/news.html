@@ -1,0 +1,61 @@
+{% extends "layout.html" %}
+
+{% block title %}Tin tức Công nghệ | 2026_!{% endblock %}
+
+{% block content %}
+<main class="max-w-7xl mx-auto px-6 py-20">
+    <div class="mb-16 border-b border-white/5 pb-10">
+        <h2 class="text-4xl font-black uppercase tracking-tighter mb-4">Tin tức <span class="gradient-text">Gaming</span></h2>
+        <p class="text-gray-500 text-sm font-medium uppercase tracking-[0.3em]">Cập nhật xu hướng công nghệ mới nhất 2026</p>
+    </div>
+
+    <!-- News Grid -->
+    <div id="news-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+        <!-- Load via JS -->
+        <div class="col-span-full text-center py-20 opacity-20">
+            <p class="text-xs font-black uppercase tracking-[0.5em]">Đang tải tin tức mới nhất...</p>
+        </div>
+    </div>
+</main>
+
+<script>
+    async function loadNewsPage() {
+        try {
+            const res = await fetch('/api/news');
+            const news = await res.json();
+            const grid = document.getElementById('news-grid');
+            
+            if (news.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center py-20 text-gray-500 uppercase font-black text-xs tracking-widest italic">Chưa có tin tức nào được cập nhật</div>';
+                return;
+            }
+
+            grid.innerHTML = news.map(item => `
+                <div class="bg-[#0f172a] rounded-[2.5rem] overflow-hidden border border-white/5 hover:border-[var(--accent)] transition-all group shadow-2xl">
+                    <div class="h-56 overflow-hidden relative">
+                        <img src="${item.image}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        <div class="absolute top-4 left-4 bg-[var(--primary)] text-white text-[8px] font-black uppercase px-3 py-1.5 rounded-full shadow-lg">HOT</div>
+                    </div>
+                    <div class="p-8">
+                        <div class="flex items-center space-x-4 mb-4 text-[9px] font-black uppercase tracking-widest text-gray-500">
+                            <span>${item.date}</span>
+                            <span class="w-1 h-1 bg-gray-500 rounded-full"></span>
+                            <span class="text-[var(--accent)]">${item.author || 'ADMIN'}</span>
+                        </div>
+                        <h3 class="font-black text-xl mb-4 group-hover:text-[var(--accent)] transition-colors line-clamp-2 leading-tight uppercase tracking-tight">${item.title}</h3>
+                        <p class="text-gray-400 text-xs line-clamp-3 mb-6 leading-relaxed">${item.summary}</p>
+                        <button class="text-[10px] font-black uppercase tracking-[0.2em] text-white hover:text-[var(--accent)] transition-all flex items-center gap-2 group/btn">
+                            Đọc chi tiết
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 group-hover/btn:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        } catch (err) {
+            console.error('Lỗi tải tin tức:', err);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadNewsPage);
+</script>
+{% endblock %}

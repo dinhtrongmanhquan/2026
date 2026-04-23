@@ -1,0 +1,124 @@
+{% extends "layout.html" %}
+
+{% block title %}Tài khoản | 2026_!{% endblock %}
+
+{% block content %}
+<main class="max-w-md mx-auto px-6 py-24">
+    <div id="auth-container" class="bg-[#0f172a] border border-white/10 rounded-[3rem] p-10 backdrop-blur-3xl shadow-2xl">
+        <!-- Tab Toggle -->
+        <div class="flex border-b border-white/5 mb-10 pb-4 justify-center space-x-8 text-xs font-black uppercase tracking-widest text-slate-500">
+            <button onclick="toggleAuth('login')" id="login-tab" class="text-white border-b-2 border-[var(--accent)] pb-4 transition-all">Đăng nhập</button>
+            <button onclick="toggleAuth('register')" id="register-tab" class="hover:text-white transition-all">Đăng ký</button>
+        </div>
+
+        <!-- Login Form -->
+        <div id="login-section">
+            <h2 class="text-3xl font-black mb-8 text-center uppercase tracking-tighter">Chào mừng <span class="gradient-text">trở lại</span></h2>
+            <form id="login-form" class="space-y-6">
+                <div>
+                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 block">Email</label>
+                    <input type="email" id="login-email" required class="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white outline-none focus:border-[var(--accent)] transition-colors" placeholder="your@email.com">
+                </div>
+                <div>
+                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 block">Mật khẩu</label>
+                    <input type="password" id="login-password" required class="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white outline-none focus:border-[var(--accent)] transition-colors" placeholder="••••••••">
+                </div>
+                <button type="submit" class="w-full btn-premium py-5 text-[11px]">Đăng nhập ngay</button>
+            </form>
+        </div>
+
+        <!-- Register Form -->
+        <div id="register-section" class="hidden">
+            <h2 class="text-3xl font-black mb-8 text-center uppercase tracking-tighter">Gia nhập <span class="gradient-text">biệt đội</span></h2>
+            <form id="register-form" class="space-y-5">
+                <div>
+                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 block">Họ và tên</label>
+                    <input type="text" id="reg-name" required class="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white outline-none focus:border-[var(--primary)] transition-colors" placeholder="Nguyễn Văn A">
+                </div>
+                <div>
+                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 block">Email</label>
+                    <input type="email" id="reg-email" required class="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white outline-none focus:border-[var(--primary)] transition-colors" placeholder="your@email.com">
+                </div>
+                <div>
+                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 block">Mật khẩu</label>
+                    <input type="password" id="reg-password" required class="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white outline-none focus:border-[var(--primary)] transition-colors" placeholder="••••••••">
+                    <p class="mt-2 text-[9px] text-gray-500 leading-relaxed italic">
+                        * Yêu cầu: Tối thiểu 8 ký tự, có 1 chữ Hoa, 1 chữ thường, 1 số và 1 ký tự đặc biệt.
+                    </p>
+                </div>
+                <button type="submit" class="w-full btn-premium py-5 text-[11px] !bg-cyan-600 shadow-cyan-600/20">Đăng ký thành viên</button>
+            </form>
+        </div>
+    </div>
+</main>
+
+<script>
+    function toggleAuth(type) {
+        const loginSection = document.getElementById('login-section');
+        const registerSection = document.getElementById('register-section');
+        const loginTab = document.getElementById('login-tab');
+        const registerTab = document.getElementById('register-tab');
+
+        if (type === 'login') {
+            loginSection.classList.remove('hidden');
+            registerSection.classList.add('hidden');
+            loginTab.classList.add('text-white', 'border-b-2', 'border-[var(--accent)]');
+            registerTab.classList.remove('text-white', 'border-b-2', 'border-[var(--accent)]');
+        } else {
+            loginSection.classList.add('hidden');
+            registerSection.classList.remove('hidden');
+            registerTab.classList.add('text-white', 'border-b-2', 'border-[var(--accent)]');
+            loginTab.classList.remove('text-white', 'border-b-2', 'border-[var(--accent)]');
+        }
+    }
+
+    // Login logic
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+
+        try {
+            const res = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            const data = await res.json();
+            if (data.success) {
+                alert('Đăng nhập thành công!');
+                location.href = data.user.role === 'admin' ? '/admin' : '/profile';
+            } else {
+                alert(data.message || 'Lỗi đăng nhập');
+            }
+        } catch (err) {
+            alert('Máy chủ không phản hồi');
+        }
+    });
+
+    // Register logic
+    document.getElementById('register-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('reg-name').value;
+        const email = document.getElementById('reg-email').value;
+        const password = document.getElementById('reg-password').value;
+
+        try {
+            const res = await fetch('/api/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, password })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                alert('Đăng ký thành công! Hãy đăng nhập ngay.');
+                toggleAuth('login');
+            } else {
+                alert(data.message || 'Lỗi đăng ký');
+            }
+        } catch (err) {
+            alert('Máy chủ không phản hồi');
+        }
+    });
+</script>
+{% endblock %}

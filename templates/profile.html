@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+
+{% block title %}Hồ sơ cá nhân | 2026_!{% endblock %}
+
+{% block content %}
+<main class="max-w-4xl mx-auto px-6 py-20">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+        <!-- Sidebar -->
+        <aside class="md:col-span-1">
+            <div class="bg-[#0f172a] border border-white/10 rounded-3xl p-8 text-center shadow-2xl">
+                <div class="w-24 h-24 bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] rounded-full mx-auto mb-6 flex items-center justify-center text-3xl font-black italic">
+                    {{ session.get('user_name', 'U')[0] | upper }}
+                </div>
+                <h3 class="text-xl font-black mb-2">{{ session.get('user_name', 'Người dùng') }}</h3>
+                <p class="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-8">Thành viên 2026_!</p>
+                
+                <nav class="space-y-2 text-left">
+                    <a href="#" class="block px-6 py-3 rounded-xl bg-white/5 text-[var(--accent)] font-bold text-xs">Thông tin cá nhân</a>
+                    <a href="#" class="block px-6 py-3 rounded-xl hover:bg-white/5 transition-all text-xs text-slate-400">Đơn hàng của tôi</a>
+                    <a href="/logout" class="block px-6 py-3 rounded-xl hover:bg-red-500/10 text-red-500 text-xs font-bold transition-all mt-8">Đăng xuất</a>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="md:col-span-2 space-y-8">
+            <div class="bg-[#0f172a] border border-white/10 rounded-3xl p-10 shadow-2xl">
+                <h2 class="text-2xl font-black mb-8 uppercase tracking-tight gradient-text">Thông tin tài khoản</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                    <div>
+                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 block">Họ và tên</label>
+                        <p class="font-bold">{{ session.get('user_name', 'N/A') }}</p>
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 block">Email liên hệ</label>
+                        <p class="font-bold">{{ session.get('user_email', 'N/A') }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-[#0f172a] border border-white/10 rounded-3xl p-10 shadow-2xl">
+                <h2 class="text-2xl font-black mb-8 uppercase tracking-tight">Hoạt động <span class="text-[var(--primary)]">gần đây</span></h2>
+                <div class="space-y-4">
+                    <div class="bg-white/5 p-6 rounded-2xl border border-white/5 flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-bold mb-1">Đăng nhập hệ thống</p>
+                            <p class="text-[10px] text-slate-500">Vừa xong • Từ trình duyệt Chrome</p>
+                        </div>
+                        <div class="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Thành công</div>
+                    </div>
+                    <div class="bg-white/5 p-6 rounded-2xl border border-white/5 flex items-center justify-between opacity-50">
+                        <div>
+                            <p class="text-xs font-bold mb-1">Chưa có đơn hàng nào</p>
+                            <p class="text-[10px] text-slate-500">Bạn chưa thực hiện giao dịch nào.</p>
+                        </div>
+                        <a href="/products" class="text-[10px] font-black text-[var(--accent)] uppercase tracking-widest hover:underline">Mua sắm ngay</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

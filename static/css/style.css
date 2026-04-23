@@ -1,0 +1,187 @@
+:root {
+    --bg-primary: #020617;
+    --bg-secondary: #0f172a;
+    --primary: #ff0055; /* Neon Red */
+    --accent: #00f2ff; /* Neon Cyan */
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --glass: rgba(15, 23, 42, 0.8);
+    --border: rgba(255, 255, 255, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 900;
+}
+
+/* Custom Scrollbar Gaming */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { 
+    background: linear-gradient(to bottom, var(--primary), var(--accent));
+    border-radius: 10px;
+}
+
+/* Layout Overrides */
+nav {
+    background: var(--glass) !important;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+}
+
+.top-bar {
+    background: linear-gradient(90deg, #020617, #1e1b4b) !important;
+    border-bottom: 1px solid var(--primary);
+}
+
+header {
+    background: var(--bg-secondary) !important;
+}
+
+/* UI Elements */
+.btn-premium {
+    background: linear-gradient(135deg, var(--primary), #b91c1c);
+    color: white;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border-radius: 0.5rem;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(255, 0, 85, 0.3);
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-premium:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 0, 85, 0.5);
+    filter: brightness(1.2);
+}
+
+/* Product Card Gaming Style */
+.product-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(0, 242, 255, 0.05) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.4s;
+}
+
+.product-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 242, 255, 0.1);
+}
+
+.product-card:hover::before {
+    opacity: 1;
+}
+
+.product-image-container {
+    background: #000;
+    border-radius: 0.75rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    position: relative;
+}
+
+.sale-badge {
+    background: var(--primary);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 2rem;
+    font-size: 0.7rem;
+    font-weight: 900;
+    box-shadow: 0 0 10px rgba(255, 0, 85, 0.5);
+}
+
+.price-new {
+    color: var(--primary);
+    font-size: 1.25rem;
+    font-weight: 900;
+    text-shadow: 0 0 10px rgba(255, 0, 85, 0.3);
+}
+
+.price-old {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    text-decoration: line-through;
+}
+
+.product-title {
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.category-label {
+    color: var(--accent);
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+/* Build PC & News Overrides */
+.bg-white {
+    background-color: var(--bg-secondary) !important;
+    border-color: var(--border) !important;
+    color: var(--text-primary) !important;
+}
+
+.text-[#00418c] {
+    color: var(--accent) !important;
+}
+
+.border-red-600 {
+    border-color: var(--primary) !important;
+}
+
+aside {
+    background-color: var(--bg-secondary) !important;
+}
+
+aside div, aside ul {
+    border-color: var(--border) !important;
+}
+
+aside li:hover {
+    background-color: rgba(255, 0, 85, 0.1) !important;
+    color: var(--primary) !important;
+}

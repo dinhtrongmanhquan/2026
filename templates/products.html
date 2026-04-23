@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block title %}Tất cả sản phẩm | 2026_!{% endblock %}
+
+{% block content %}
+<main class="max-w-7xl mx-auto px-6 py-12">
+    <div class="bg-white p-8 rounded-md border border-gray-200 shadow-sm mb-12">
+        <h2 class="text-2xl font-bold text-[#00418c] uppercase border-l-4 border-red-600 pl-4 mb-2">Bộ sưu tập sản phẩm</h2>
+        <p class="text-gray-500 text-sm">Trải nghiệm những công nghệ dẫn đầu xu hướng năm 2026 tại 2026_!.</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6" id="all-products-grid">
+        <!-- Load via JS -->
+    </div>
+</main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        loadProducts('all-products-grid');
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,156 @@
+{% extends "layout.html" %}
+
+{% block title %}Xây dựng cấu hình PC | 2026_!{% endblock %}
+
+{% block content %}
+<main class="max-w-7xl mx-auto px-6 py-12">
+    <div class="bg-white p-8 rounded-md border border-gray-200 shadow-sm mb-12 flex justify-between items-center">
+        <div>
+            <h2 class="text-2xl font-bold text-[#00418c] uppercase border-l-4 border-red-600 pl-4 mb-2">Xây dựng cấu hình PC</h2>
+            <p class="text-gray-500 text-sm">Tự tay lựa chọn linh kiện để tạo nên bộ máy trong mơ của bạn.</p>
+        </div>
+        <div class="text-right">
+            <p class="text-xs text-gray-400 font-bold uppercase mb-1">Tổng cộng dự tính</p>
+            <p id="build-total" class="text-2xl font-black text-red-600">0đ</p>
+        </div>
+    </div>
+
+    <div id="build-rows" class="space-y-4">
+        <!-- Rows will be rendered by JS -->
+    </div>
+
+    <div class="mt-12 flex justify-end gap-4">
+        <button onclick="resetBuild()" class="px-8 py-3 bg-gray-200 text-gray-700 font-bold rounded uppercase text-xs">Làm mới</button>
+        <button onclick="addBuildToCart()" class="px-8 py-3 bg-red-600 text-white font-bold rounded uppercase text-xs shadow-lg shadow-red-600/20">Thêm vào giỏ hàng</button>
+    </div>
+</main>
+
+<!-- Component Selection Modal -->
+<div id="selection-modal" class="fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-6">
+    <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full h-[80vh] flex flex-col overflow-hidden">
+        <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+            <h3 id="modal-category-title" class="font-bold text-[#00418c] uppercase">Chọn linh kiện</h3>
+            <button onclick="closeSelection()" class="text-gray-400 hover:text-gray-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+        </div>
+        <div id="modal-product-list" class="flex-1 overflow-y-auto p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Products will be loaded here -->
+        </div>
+    </div>
+</div>
+
+<script>
+    const components = [
+        { id: 'cpu', name: 'Vi xử lý (CPU)', icon: 'M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z' },
+        { id: 'main', name: 'Bo mạch chủ (Mainboard)', icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
+        { id: 'ram', name: 'Bộ nhớ trong (RAM)', icon: 'M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2' },
+        { id: 'vga', name: 'Card đồ họa (VGA)', icon: 'M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
+        { id: 'ssd', name: 'Ổ cứng (SSD/HDD)', icon: 'M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4a2 2 0 012-2m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4' }
+    ];
+
+    let selectedComponents = {};
+    let allProducts = [];
+
+    async function initBuild() {
+        const res = await fetch('/api/products');
+        allProducts = await res.json();
+        renderRows();
+    }
+
+    function renderRows() {
+        const container = document.getElementById('build-rows');
+        container.innerHTML = components.map(c => {
+            const selected = selectedComponents[c.id];
+            return `
+            <div class="bg-white p-6 rounded-md border border-gray-200 shadow-sm flex items-center gap-6">
+                <div class="w-16 h-16 bg-gray-50 rounded flex items-center justify-center">
+                    ${selected ? `<img src="${selected.image}" class="w-full h-full object-contain">` : `
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${c.icon}" /></svg>
+                    `}
+                </div>
+                <div class="flex-1">
+                    <h3 class="font-bold text-sm uppercase">${c.name}</h3>
+                    <p class="text-xs ${selected ? 'text-[#00418c] font-bold' : 'text-gray-400'}">
+                        ${selected ? selected.name : `Vui lòng chọn ${c.name.split('(')[0]}`}
+                    </p>
+                </div>
+                <div class="text-right flex items-center gap-6">
+                    ${selected ? `<p class="font-black text-red-600 text-sm">${selected.price.toLocaleString('vi-VN')}đ</p>` : ''}
+                    <button onclick="openSelection('${c.id}')" class="btn-premium px-6 py-2 text-[10px]">
+                        ${selected ? 'Thay đổi' : 'Chọn linh kiện'}
+                    </button>
+                    ${selected ? `<button onclick="removeComponent('${c.id}')" class="text-gray-400 hover:text-red-500"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>` : ''}
+                </div>
+            </div>
+            `;
+        }).join('');
+        updateTotal();
+    }
+
+    function openSelection(catId) {
+        const catName = components.find(c => c.id === catId).name;
+        document.getElementById('modal-category-title').innerText = 'Chọn ' + catName;
+        const list = document.getElementById('modal-product-list');
+        
+        // Filter products (mock filter by category name)
+        const filtered = allProducts.filter(p => p.category.toLowerCase().includes(catId) || p.category === 'Component');
+        
+        list.innerHTML = filtered.map(p => `
+            <div onclick="selectComponent('${catId}', ${JSON.stringify(p).replace(/'/g, "&apos;")})" class="bg-white border border-gray-100 p-4 rounded-lg hover:border-[#00418c] cursor-pointer group transition-all">
+                <img src="${p.image}" class="w-full h-32 object-contain mb-4 group-hover:scale-105 transition-transform">
+                <h4 class="text-xs font-bold line-clamp-2 mb-2">${p.name}</h4>
+                <p class="text-red-600 font-black text-sm">${p.price.toLocaleString('vi-VN')}đ</p>
+            </div>
+        `).join('');
+
+        if (filtered.length === 0) list.innerHTML = '<p class="col-span-full text-center text-gray-400 py-12">Chưa có linh kiện này trong kho.</p>';
+
+        document.getElementById('selection-modal').classList.remove('hidden');
+    }
+
+    function closeSelection() {
+        document.getElementById('selection-modal').classList.add('hidden');
+    }
+
+    function selectComponent(catId, product) {
+        selectedComponents[catId] = product;
+        renderRows();
+        closeSelection();
+    }
+
+    function removeComponent(catId) {
+        delete selectedComponents[catId];
+        renderRows();
+    }
+
+    function updateTotal() {
+        const total = Object.values(selectedComponents).reduce((sum, p) => sum + p.price, 0);
+        document.getElementById('build-total').innerText = total.toLocaleString('vi-VN') + 'đ';
+    }
+
+    function resetBuild() {
+        if (confirm('Làm mới toàn bộ cấu hình?')) {
+            selectedComponents = {};
+            renderRows();
+        }
+    }
+
+    function addBuildToCart() {
+        const items = Object.values(selectedComponents);
+        if (items.length === 0) return alert('Vui lòng chọn ít nhất 1 linh kiện!');
+        
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        items.forEach(item => {
+            const existing = cart.find(i => i.id === item.id);
+            if (existing) existing.quantity++;
+            else cart.push({...item, quantity: 1});
+        });
+        localStorage.setItem('cart', JSON.stringify(cart));
+        alert('Đã thêm toàn bộ linh kiện vào giỏ hàng!');
+        location.href = '/cart';
+    }
+
+    initBuild();
+</script>
+{% endblock %}

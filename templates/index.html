@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<main class="max-w-7xl mx-auto px-6 py-8 flex gap-8">
+    <!-- Sidebar Categories -->
+    <aside class="hidden lg:block w-72 flex-shrink-0">
+        <div class="bg-[#0f172a] border border-white/5 rounded-xl overflow-hidden shadow-2xl">
+            <div class="bg-white/5 px-6 py-4 border-b border-white/10 font-black text-[10px] tracking-widest text-[var(--accent)] uppercase">Arsenal Categories</div>
+            <ul class="divide-y divide-white/5">
+                <li onclick="location.href='/products?category=Laptop'" class="px-6 py-4 hover:bg-[var(--primary)]/10 hover:text-[var(--primary)] cursor-pointer text-xs font-bold flex items-center justify-between group transition-all">
+                    <span>Laptop - Laptop Gaming</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 opacity-30 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                </li>
+                <li onclick="location.href='/products?category=PC'" class="px-6 py-4 hover:bg-[var(--primary)]/10 hover:text-[var(--primary)] cursor-pointer text-xs font-bold flex items-center justify-between group transition-all">
+                    <span>PC Gaming - Đồ họa</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 opacity-30 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                </li>
+                <li onclick="location.href='/products?category=Component'" class="px-6 py-4 hover:bg-[var(--primary)]/10 hover:text-[var(--primary)] cursor-pointer text-xs font-bold flex items-center justify-between group transition-all">
+                    <span>Linh kiện máy tính</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 opacity-30 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                </li>
+                <li onclick="location.href='/products?category=Monitor'" class="px-6 py-4 hover:bg-[var(--primary)]/10 hover:text-[var(--primary)] cursor-pointer text-xs font-bold flex items-center justify-between group transition-all">
+                    <span>Màn hình máy tính</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 opacity-30 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                </li>
+            </ul>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1">
+        <!-- Gaming Slider -->
+        <div class="w-full h-[400px] rounded-2xl overflow-hidden bg-black relative shadow-2xl group border border-white/5">
+            <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1200" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-1000">
+            <div class="absolute inset-0 bg-gradient-to-r from-black via-black/40 to-transparent flex items-center px-16">
+                <div class="max-w-lg">
+                    <span class="text-[var(--primary)] font-black text-[10px] tracking-[0.4em] uppercase mb-4 block">New Generation 2026</span>
+                    <h2 class="text-white text-6xl font-black mb-6 uppercase leading-tight">UNLEASH THE <br> <span class="gradient-text">BEAST</span></h2>
+                    <p class="text-gray-400 mb-8 font-medium text-sm">Trang bị ngay những siêu phẩm đồ họa mạnh mẽ nhất thế giới.</p>
+                    <button class="btn-premium px-10 py-4 text-xs">Tham chiến ngay</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Featured Products -->
+        <div class="mt-12">
+            <div class="flex items-center justify-between mb-10 border-b border-white/5 pb-6">
+                <h3 class="text-2xl font-black uppercase tracking-tight">Sản phẩm <span class="text-[var(--primary)]">nổi bật</span></h3>
+                <a href="/products" class="text-[10px] font-black text-gray-500 hover:text-[var(--accent)] uppercase tracking-widest transition-colors">Xem toàn bộ kho</a>
+            </div>
+            
+            <div id="featured-products" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Loaded via JS -->
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Features Section -->
+<section class="max-w-7xl mx-auto px-6 py-32 border-t border-white/5">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+        <div class="p-12 rounded-[2.5rem] bg-white/5 border border-white/10 hover:border-cyan-400/50 transition-all group">
+            <div class="text-cyan-400 mb-8 text-4xl group-hover:scale-110 transition-transform">⚡</div>
+            <h4 class="text-xl font-bold mb-4">Giao hàng hỏa tốc</h4>
+            <p class="text-slate-400 text-sm leading-relaxed">Nhận hàng ngay trong vòng 2h tại khu vực nội thành.</p>
+        </div>
+        <div class="p-12 rounded-[2.5rem] bg-white/5 border border-white/10 hover:border-indigo-400/50 transition-all group">
+            <div class="text-indigo-400 mb-8 text-4xl group-hover:scale-110 transition-transform">🛡️</div>
+            <h4 class="text-xl font-bold mb-4">Bảo hành 24 tháng</h4>
+            <p class="text-slate-400 text-sm leading-relaxed">Chế độ bảo hành 1 đổi 1 cực kỳ an tâm cho người dùng.</p>
+        </div>
+        <div class="p-12 rounded-[2.5rem] bg-white/5 border border-white/10 hover:border-purple-400/50 transition-all group">
+            <div class="text-purple-400 mb-8 text-4xl group-hover:scale-110 transition-transform">💎</div>
+            <h4 class="text-xl font-bold mb-4">Hàng chính hãng</h4>
+            <p class="text-slate-400 text-sm leading-relaxed">Cam kết 100% sản phẩm nhập khẩu chính ngạch.</p>
+        </div>
+        <div class="p-12 rounded-[2.5rem] bg-white/5 border border-white/10 hover:border-emerald-400/50 transition-all group">
+            <div class="text-emerald-400 mb-8 text-4xl group-hover:scale-110 transition-transform">🎧</div>
+            <h4 class="text-xl font-bold mb-4">Hỗ trợ 24/7</h4>
+            <p class="text-slate-400 text-sm leading-relaxed">Đội ngũ kỹ thuật luôn sẵn sàng giải đáp mọi thắc mắc.</p>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
