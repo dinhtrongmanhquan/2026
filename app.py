@@ -7,7 +7,56 @@ app = Flask(__name__)
 app.secret_key = 'super-secret-gaming-key'
 
 # --- CẤU HÌNH DATABASE ---
-DB_PATH = 'database.sqlite'
+import pyodbc
+
+# --- CẤU HÌNH DATABASE SQL SERVER ---
+# Lưu ý: Đảm bảo bạn đã cài ODBC Driver 17 hoặc 18 cho SQL Server
+SQL_SERVER_CONFIG = {
+    'driver': '{ODBC Driver 17 for SQL Server}',
+    'server': r'localhost\SQLEXPRESS',
+    'database': 'master', # Bạn có thể đổi tên database nếu muốn
+    'trusted_connection': 'yes'
+}
+
+def get_db_connection():
+    try:
+        conn_str = (
+            f"Driver={SQL_SERVER_CONFIG['driver']};"
+            f"Server={SQL_SERVER_CONFIG['server']};"
+            f"Database={SQL_SERVER_CONFIG['database']};"
+            f"Trusted_Connection={SQL_SERVER_CONFIG['trusted_connection']};"
+        )
+        conn = pyodbc.connect(conn_str)
+        return conn
+    except Exception as e:
+        print(f"Lỗi kết nối SQL Server: {e}")
+        import sqlite3
+        conn = sqlite3.connect('database.sqlite')
+        conn.row_factory = sqlite3.Row
+        return conn
+
+def dict_factory(cursor, row):
+    d = {}
+    for idx, col in enumerate(cursor.description):
+        d[col[0]] = row[idx]
+    return d
+
+def query_db(query, args=(), one=False):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute(query, args)
+    if 'SELECT' in query.upper():
+        rv = [dict_factory(cur, row) for row in cur.fetchall()]
+        conn.close()
+        return (rv[0] if rv else None) if one else rv
+    else:
+        conn.commit()
+        conn.close()
+        return None
+
+def init_db():
+    # Hàm này sẽ được gọi khi khởi động ứng dụng
+    pass
 
 def is_password_strong(password):
     if len(password) < 8: return False
@@ -16,16 +65,6 @@ def is_password_strong(password):
     if not re.search(r"[0-9]", password): return False
     if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password): return False
     return True
-
-def get_db_connection():
-    # Thêm timeout 20 giây để tránh lỗi 'database is locked' khi đồng bộ 100 sản phẩm
-    conn = sqlite3.connect(DB_PATH, timeout=20)
-    conn.row_factory = sqlite3.Row
-    return conn
-
-def init_db():
-    conn = get_db_connection()
-    cursor = conn.cursor()
     
     # Bảng Sản phẩm (Theo file của bạn)
     cursor.execute('''
