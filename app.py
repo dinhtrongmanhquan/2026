@@ -14,7 +14,7 @@ import pyodbc
 SQL_SERVER_CONFIG = {
     'driver': '{ODBC Driver 17 for SQL Server}',
     'server': r'localhost\SQLEXPRESS',
-    'database': 'master', # Bạn có thể đổi tên database nếu muốn
+    'database': 'sanpham.sql', 
     'trusted_connection': 'yes'
 }
 
@@ -66,6 +66,16 @@ def is_password_strong(password):
     if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password): return False
     return True
     
+def get_db_connection():
+    # Thêm timeout 20 giây để tránh lỗi 'database is locked' khi đồng bộ 100 sản phẩm
+    conn = sqlite3.connect(DB_PATH, timeout=20)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+def init_db():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
     # Bảng Sản phẩm (Theo file của bạn)
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS products (
@@ -462,3 +472,8 @@ def register():
 if __name__ == '__main__':
     init_db()
     app.run(debug=True, port=5000)
+if __name__ == "__main__":
+    import os
+    # Server sẽ cấp một cổng (port) ngẫu nhiên, bạn cần lấy nó từ môi trường
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
