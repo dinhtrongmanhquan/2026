@@ -1,0 +1,3144 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2026_!</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght=300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="chat.css" />
+  <style>
+    /* ===== FIREBASE LOADING OVERLAY ===== */
+    #fbLoading {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: linear-gradient(135deg, #0068ff, #004bb5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      color: white;
+    }
+
+    #fbLoading .fb-logo {
+      font-size: 52px;
+    }
+
+    #fbLoading h2 {
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    #fbLoading p {
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    .fb-spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* ===== SETUP MODAL ===== */
+    #setupModal {
+      position: fixed;
+      inset: 0;
+      z-index: 9998;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    #setupModal.hidden {
+      display: none;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .setup-box {
+      background: white;
+      border-radius: 24px;
+      padding: 32px;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 24px 64px rgba(0, 82, 204, 0.25);
+    }
+
+    .setup-box h2 {
+      font-size: 22px;
+      font-weight: 800;
+      color: #172033;
+      margin-bottom: 8px;
+    }
+
+    .setup-box p {
+      font-size: 14px;
+      color: #6b7280;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .setup-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .setup-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: #f3f7ff;
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+
+    .setup-step .step-num {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #0068ff;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .setup-step p {
+      margin: 0;
+      font-size: 13px;
+      color: #172033;
+    }
+
+    .setup-step code {
+      background: #e0eeff;
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-family: monospace;
+      color: #0052cc;
+    }
+
+    .setup-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .setup-input-group label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #172033;
+    }
+
+    .setup-input-group textarea {
+      width: 100%;
+      min-height: 100px;
+      border: 1.5px solid #dce5f5;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 12px;
+      font-family: monospace;
+      outline: none;
+      resize: vertical;
+      background: #f8fbff;
+      color: #172033;
+      transition: border-color 0.2s;
+    }
+
+    .setup-input-group textarea:focus {
+      border-color: #0068ff;
+      box-shadow: 0 0 0 3px rgba(0, 104, 255, 0.1);
+    }
+
+    .setup-err {
+      color: #e53935;
+      font-size: 13px;
+      font-weight: 600;
+      min-height: 18px;
+    }
+
+    .setup-btn {
+      width: 100%;
+      height: 48px;
+      border: none;
+      border-radius: 14px;
+      background: #0068ff;
+      color: white;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background 0.2s;
+    }
+
+    .setup-btn:hover {
+      background: #0052cc;
+    }
+
+    .setup-demo-note {
+      margin-top: 14px;
+      padding: 10px 14px;
+      background: #fffbea;
+      border: 1px solid #fde68a;
+      border-radius: 10px;
+      font-size: 12px;
+      color: #92400e;
+      line-height: 1.6;
+    }
+
+    /* ===== YT & FILE SELECTOR STYLES ===== */
+    .yt-select-group {
+      background: #f8fbff;
+      border: 1px dashed #0068ff;
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 10px;
+    }
+
+    .yt-time-range {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .yt-time-range div {
+      flex: 1;
+    }
+
+    .yt-time-range label {
+      font-size: 11px !important;
+      color: #6b7280;
+    }
+
+    .file-input-wrapper {
+      margin-top: 6px;
+      margin-bottom: 12px;
+    }
+
+    .file-input-wrapper input[type="file"] {
+      padding: 6px;
+      background: #f8fbff;
+      border: 1px solid #dce5f5;
+      border-radius: 12px;
+      width: 100%;
+      font-size: 12px;
+    }
+  </style>
+  <script src="https://www.youtube.com/iframe_api"></script>
+</head>
+
+<body>
+
+  <div id="fbLoading">
+    <div class="fb-logo">🔥</div>
+    <h2>2026_!</h2>
+    <p>Đang kết nối realtime...</p>
+    <div class="fb-spinner"></div>
+  </div>
+
+  <div id="authScreen" class="auth-screen hidden">
+    <style>
+      /* Cố định Logo ở góc trái trên cùng */
+      .logo {
+        position: fixed !important;
+        top: 40px !important;
+        left: 50px !important;
+        margin: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 16px !important;
+        z-index: 100 !important;
+      }
+
+      .logo-icon {
+        width: 60px !important;
+        height: 60px !important;
+        background: #09111e !important;
+        border: 1.5px solid #00c3ff !important;
+        box-shadow: 0 0 15px rgba(0, 195, 255, 0.25) !important;
+        border-radius: 18px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        flex-shrink: 0 !important;
+      }
+
+      .logo-icon i {
+        font-size: 28px !important;
+        color: #00c3ff !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      .logo h2 {
+        font-size: 28px !important;
+        font-weight: 800 !important;
+        color: #ffffff !important;
+        margin: 0 !important;
+        line-height: 1 !important;
+        letter-spacing: 0.5px !important;
+      }
+
+      .logo p {
+        font-size: 13px !important;
+        color: #a0a5b1 !important;
+        margin: 0 !important;
+        margin-top: 4px !important;
+        font-weight: 500 !important;
+      }
+
+      /* Căn giữa Form đăng ký / đăng nhập */
+      .auth-screen {
+        width: 100vw !important;
+        display: flex;
+        justify-content: center !important;
+        align-items: center !important;
+      }
+
+      .app {
+        margin: 0 auto !important;
+        width: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-align: center !important;
+      }
+
+      .intro,
+      .intro-content,
+      .auth {
+        width: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-align: center !important;
+      }
+
+      .intro-content {
+        margin-top: 140px !important;
+        /* Đẩy nội dung giới thiệu xuống dưới cấp độ của logo để tránh va chạm */
+      }
+
+      .intro-content h1,
+      .intro-content p {
+        text-align: center !important;
+      }
+
+      /* Thêm nhiều hành tinh */
+      .planet-4 {
+        display: block !important;
+        width: 180px;
+        height: 180px;
+        background-image: url('Jupiter.jpg');
+        top: 10%;
+        left: 30%;
+        opacity: 0.7;
+        mix-blend-mode: screen;
+        animation: floatTilt 20s ease-in-out infinite alternate;
+        border-radius: 50%;
+      }
+
+      .planet-5 {
+        width: 160px;
+        height: 160px;
+        background-image: url('Neptune_Full.jpg');
+        bottom: 15%;
+        right: 25%;
+        opacity: 0.6;
+        mix-blend-mode: screen;
+        animation: orbitPlanet1 70s linear infinite reverse;
+        border-radius: 50%;
+      }
+
+      .planet-6 {
+        width: 90px;
+        height: 90px;
+        background-image: url('Mercury_in_true_color.jpg');
+        top: 40%;
+        right: 10%;
+        opacity: 0.8;
+        mix-blend-mode: screen;
+        animation: floatTilt 15s ease-in-out infinite;
+        border-radius: 50%;
+      }
+
+      .planet-7 {
+        display: none !important;
+      }
+
+      /* Welcome Screen and Carousel Styles */
+      .chat-welcome {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        background-color: #1e222b;
+        color: #ffffff;
+        padding: 40px;
+        box-sizing: border-box;
+      }
+
+      .welcome-main-title {
+        font-size: 26px;
+        font-weight: 700;
+        color: #ffffff;
+        text-align: center;
+        margin: 0;
+      }
+
+      .welcome-main-desc {
+        font-size: 14px;
+        color: #7a7f8a;
+        text-align: center;
+        margin-top: 12px;
+        margin-bottom: 0;
+        max-width: 580px;
+        line-height: 1.6;
+      }
+
+      .welcome-carousel {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        max-width: 650px;
+        margin-top: 30px;
+      }
+
+      .carousel-viewport {
+        width: 100%;
+        overflow: hidden;
+        height: 320px;
+      }
+
+      .carousel-container {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+
+      .carousel-slide {
+        flex-shrink: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 0 10px;
+        box-sizing: border-box;
+      }
+
+      .slide-ill {
+        height: 160px;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: visible;
+      }
+
+      .slide-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #2AABEE;
+        margin: 0;
+        margin-bottom: 8px;
+      }
+
+      .slide-desc {
+        font-size: 13px;
+        color: #7a7f8a;
+        margin: 0;
+        max-width: 460px;
+        text-align: center;
+        line-height: 1.6;
+      }
+
+      .carousel-arrow {
+        background: transparent;
+        border: none;
+        color: #4e5361;
+        font-size: 36px;
+        cursor: pointer;
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+      }
+
+      .carousel-arrow:hover {
+        color: #ffffff;
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .carousel-dots {
+        display: flex;
+        gap: 8px;
+        margin-top: 20px;
+        justify-content: center;
+      }
+
+      .carousel-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #4e5361;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .carousel-dot.active {
+        background: #2AABEE;
+        transform: scale(1.25);
+      }
+    </style>
+    <div class="planet planet-1"></div>
+    <div class="planet planet-2"></div>
+    <div class="planet planet-3"></div>
+    <div class="planet planet-4"></div>
+    <div class="planet planet-5"></div>
+    <div class="planet planet-6"></div>
+    <div class="planet planet-7"></div>
+    <main class="app">
+      <section class="intro">
+        <div class="logo">
+          <div class="logo-icon"><i class="ti ti-message-circle"></i></div>
+          <div>
+            <h2>2026_!</h2>
+            <p>Hệ thống Chat 2026</p>
+          </div>
+        </div>
+        <div class="intro-content">
+          <h1>Trò chuyện an toàn, bảo mật tuyệt đối.</h1>
+          <p>Nền tảng giao tiếp riêng tư: mã hóa dữ liệu, bảo vệ tin nhắn và cuộc gọi của bạn khỏi mọi rủi ro rò rỉ
+            thông tin.</p>
+        </div>
+      </section>
+
+      <section class="auth">
+        <div class="auth-card">
+          <div class="tabs">
+            <button id="loginTab" class="tab active" type="button">Đăng nhập</button>
+            <button id="registerTab" class="tab" type="button">Đăng ký</button>
+          </div>
+
+          <form id="loginForm" class="form active">
+            <h2>Chào mừng trở lại</h2>
+            <p class="form-desc">Đăng nhập để vào 2026_!</p>
+            <label>Tài khoản / Số điện thoại</label>
+            <div class="input-box">
+              <input id="loginAccount" type="text" placeholder="Nhập số điện thoại" />
+              <i class="ti ti-user"></i>
+            </div>
+            <label>Mật khẩu</label>
+            <div class="input-box">
+              <input id="loginPassword" type="password" placeholder="Nhập mật khẩu" />
+              <i class="ti ti-lock"></i>
+            </div>
+            <div class="form-options">
+              <label class="remember"><input type="checkbox" />Ghi nhớ</label>
+              <button id="forgotBtn" type="button" class="link-btn">Quên mật khẩu?</button>
+            </div>
+            <button class="main-btn" type="submit"><i class="ti ti-login"></i>Đăng nhập</button>
+            <p class="switch-text">Chưa có tài khoản? <button type="button" id="goRegister">Đăng ký ngay</button></p>
+          </form>
+
+          <form id="registerForm" class="form">
+            <h2>Tạo tài khoản</h2>
+            <p class="form-desc">Đăng ký tài khoản mới cho thành viên</p>
+            <label>Họ và tên</label>
+            <div class="input-box">
+              <input id="regName" type="text" placeholder="Nhập họ và tên" />
+              <i class="ti ti-user-plus"></i>
+            </div>
+            <label>Số điện thoại</label>
+            <div class="input-box">
+              <input id="regPhone" type="text" placeholder="Nhập số điện thoại" />
+              <i class="ti ti-phone"></i>
+            </div>
+            <label>Mật khẩu</label>
+            <div class="input-box">
+              <input id="regPassword" type="password" placeholder="Tối thiểu 6 ký tự" />
+              <i class="ti ti-lock"></i>
+            </div>
+            <label>Nhập lại mật khẩu</label>
+            <div class="input-box">
+              <input id="regConfirm" type="password" placeholder="Nhập lại mật khẩu" />
+              <i class="ti ti-lock-check"></i>
+            </div>
+            <button class="main-btn" type="submit"><i class="ti ti-user-check"></i>Đăng ký</button>
+            <p class="switch-text">Đã có tài khoản? <button type="button" id="goLogin">Đăng nhập</button></p>
+          </form>
+
+          <form id="forgotForm" class="form">
+            <h2>Quên mật khẩu</h2>
+            <p class="form-desc" id="forgotDesc">Nhập số điện thoại để đặt lại mật khẩu</p>
+
+            <div id="forgotStep1">
+              <label>Số điện thoại</label>
+              <div class="input-box">
+                <input id="forgotPhone" type="text" placeholder="Nhập số điện thoại" />
+                <i class="ti ti-phone"></i>
+              </div>
+              <button class="main-btn" type="submit" id="checkPhoneBtn"><i class="ti ti-search"></i>Kiểm tra số điện
+                thoại</button>
+            </div>
+
+            <div id="forgotStep2" class="hidden">
+              <label>Mật khẩu mới</label>
+              <div class="input-box">
+                <input id="forgotNewPassword" type="password" placeholder="Tối thiểu 6 ký tự" />
+                <i class="ti ti-lock"></i>
+              </div>
+              <label>Nhập lại mật khẩu mới</label>
+              <div class="input-box">
+                <input id="forgotConfirmNewPassword" type="password" placeholder="Nhập lại mật khẩu mới" />
+                <i class="ti ti-lock-check"></i>
+              </div>
+              <button class="main-btn" type="submit" id="resetPasswordBtn"><i class="ti ti-key"></i>Đặt lại mật
+                khẩu</button>
+            </div>
+
+            <p class="switch-text">Nhớ mật khẩu rồi? <button type="button" id="backLogin">Quay lại đăng nhập</button>
+            </p>
+          </form>
+
+          <p id="message" class="message"></p>
+        </div>
+      </section>
+
+      <div class="features">
+        <div class="feature"><span><i class="ti ti-shield-lock"></i></span>Mã hóa dữ liệu đầu cuối</div>
+        <div class="feature"><span><i class="ti ti-lock-square-rounded"></i></span>Bảo mật thông tin cá nhân</div>
+        <div class="feature"><span><i class="ti ti-eye-off"></i></span>Không theo dõi người dùng</div>
+        <div class="feature"><span><i class="ti ti-server"></i></span>Hạ tầng máy chủ độc lập</div>
+      </div>
+    </main>
+  </div>
+
+  <div id="chatScreen" class="chat-screen hidden">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-user" id="sidebarUser">
+          <div class="avatar-wrap">
+            <div class="avatar" id="myAvatar">?</div>
+            <span class="online-dot"></span>
+          </div>
+          <div class="user-info">
+            <span class="user-name" id="myName">Người dùng</span>
+            <span class="user-status">🟢 Đang hoạt động</span>
+          </div>
+        </div>
+        <div class="sidebar-actions">
+          <button class="icon-btn" id="newGroupBtn" title="Tạo nhóm"><i class="ti ti-users-plus"></i></button>
+
+          <button class="icon-btn" id="logoutBtn" title="Đăng xuất"><i class="ti ti-logout"></i></button>
+        </div>
+      </div>
+
+      <div class="sidebar-search">
+        <div class="search-box">
+          <i class="ti ti-search"></i>
+          <input type="text" id="searchInput" placeholder="Tìm kiếm..." />
+        </div>
+      </div>
+
+      <div class="sidebar-tabs">
+        <button class="s-tab active" data-tab="chats"><i class="ti ti-message"></i><span>Tin nhắn</span></button>
+        <button class="s-tab" data-tab="contacts"><i class="ti ti-users"></i><span>Bạn bè</span></button>
+        <button class="s-tab" data-tab="requests"><i class="ti ti-user-plus"></i><span>Lời mời kết bạn</span></button>
+      </div>
+
+      <div class="conversation-list" id="convList"></div>
+    </aside>
+
+    <main class="chat-main">
+      <div class="chat-welcome" id="chatWelcome">
+        <h2 class="welcome-main-title">Chào mừng đến với 2026_! PC!</h2>
+        <p class="welcome-main-desc">Khám phá những tiện ích hỗ trợ làm việc và trò chuyện cùng người thân, bạn bè được
+          tối ưu hoá cho máy tính của bạn.</p>
+
+        <div class="welcome-carousel">
+          <button class="carousel-arrow prev" id="welcomePrevBtn"><i class="ti ti-chevron-left"></i></button>
+
+          <div class="carousel-viewport">
+            <div class="carousel-container" id="welcomeCarouselContainer">
+              <!-- Slide 1 -->
+              <div class="carousel-slide">
+                <div class="slide-ill">
+                  <!-- SVG for Slide 1 -->
+                  <svg width="240" height="180" viewBox="0 0 240 180" fill="none" xmlns="http://www.w3.org/2000/svg"
+                    style="overflow: visible;">
+                    <path d="M 50 110 C 50 150, 110 160, 110 110" stroke="#4e5361" stroke-width="1.5"
+                      stroke-dasharray="4 4" fill="none" />
+                    <path d="M 190 90 C 190 140, 130 150, 130 110" stroke="#4e5361" stroke-width="1.5"
+                      stroke-dasharray="4 4" fill="none" />
+                    <g filter="url(#dropShadow_1)">
+                      <path
+                        d="M 120 40 C 95 40, 90 60, 75 60 C 55 60, 55 85, 70 95 C 70 96, 70 97, 70 98 C 70 110, 85 110, 95 110 L 155 110 C 165 110, 175 105, 175 95 C 190 90, 185 70, 170 70 C 170 55, 150 40, 120 40 Z"
+                        fill="#0068ff" />
+                      <path d="M 120 62 L 120 88 M 120 88 L 112 80 M 120 88 L 128 80" stroke="#ffffff" stroke-width="3"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                    </g>
+                    <g transform="translate(110, 85)" filter="url(#dropShadow_1)">
+                      <path
+                        d="M 4 0 L 25 0 L 32 8 L 76 8 C 80 8, 80 12, 80 12 L 80 48 C 80 52, 76 52, 76 52 L 4 52 C 0 52, 0 48, 0 48 L 0 4 C 0 0, 4 0, 4 0 Z"
+                        fill="#ffe066" />
+                      <path d="M 0 14 L 80 14 L 80 48 C 80 52, 76 52, 76 52 L 4 52 C 0 52, 0 48, 0 48 Z"
+                        fill="#ffd43b" />
+                      <rect x="52" y="38" width="18" height="2" rx="1" fill="#c5a000" />
+                    </g>
+                    <g transform="translate(45, 75) rotate(-5)" filter="url(#dropShadow_1)">
+                      <rect width="28" height="36" rx="4" fill="#00c49f" />
+                      <path
+                        d="M 14 10 L 14 24 C 14 26.5, 12 28.5, 9.5 28.5 C 7 28.5, 5 26.5, 5 24 L 5 12 C 5 8.5, 7.5 6, 11 6 C 14.5 6, 17 8.5, 17 12 L 17 24 C 17 29, 13.5 32.5, 9 32.5 C 4.5 32.5, 1 29, 1 24 L 1 12"
+                        stroke="#ffffff" stroke-width="1.8" fill="none" stroke-linecap="round"
+                        transform="translate(5, 0)" />
+                    </g>
+                    <g transform="translate(170, 50) rotate(8)" filter="url(#dropShadow_1)">
+                      <rect width="52" height="34" rx="6" fill="#ffd43b" />
+                      <path d="M 40 34 L 46 40 L 46 34 Z" fill="#ffd43b" />
+                      <line x1="8" y1="10" x2="44" y2="10" stroke="#c5a000" stroke-width="2" stroke-linecap="round" />
+                      <line x1="8" y1="17" x2="38" y2="17" stroke="#c5a000" stroke-width="2" stroke-linecap="round" />
+                      <line x1="8" y1="24" x2="26" y2="24" stroke="#c5a000" stroke-width="2" stroke-linecap="round" />
+                    </g>
+                    <g transform="translate(130, 20) rotate(-10)" filter="url(#dropShadow_1)">
+                      <rect width="32" height="24" rx="4" fill="#9c27b0" />
+                      <path d="M 4 20 L 12 10 L 18 16 L 24 8 L 28 20 Z" fill="#ffffff" opacity="0.9" />
+                      <circle cx="24" cy="6" r="2.5" fill="#ffffff" opacity="0.9" />
+                    </g>
+                    <defs>
+                      <filter id="dropShadow_1" x="-10" y="-10" width="240" height="200" filterUnits="userSpaceOnUse">
+                        <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000000" flood-opacity="0.25" />
+                      </filter>
+                    </defs>
+                  </svg>
+                </div>
+                <h3 class="slide-title">Trải nghiệm xuyên suốt</h3>
+                <p class="slide-desc">Kết nối và giải quyết công việc trên mọi thiết bị với dữ liệu luôn được đồng bộ.
+                </p>
+              </div>
+
+              <!-- Slide 2 -->
+              <div class="carousel-slide">
+                <div class="slide-ill">
+                  <!-- SVG for Slide 2 -->
+                  <svg width="240" height="180" viewBox="0 0 240 180" fill="none" xmlns="http://www.w3.org/2000/svg"
+                    style="overflow: visible;">
+                    <path d="M 60 90 L 180 90" stroke="#4e5361" stroke-width="1.5" stroke-dasharray="3 3" />
+                    <g transform="translate(30, 50)" filter="url(#dropShadow_2)">
+                      <circle cx="25" cy="25" r="25" fill="#e91e63" />
+                      <text x="25" y="33" font-size="24" text-anchor="middle">👩‍💻</text>
+                    </g>
+                    <g transform="translate(160, 50)" filter="url(#dropShadow_2)">
+                      <circle cx="25" cy="25" r="25" fill="#00bcd4" />
+                      <text x="25" y="33" font-size="24" text-anchor="middle">🧑‍💻</text>
+                    </g>
+                    <g transform="translate(85, 45)" filter="url(#dropShadow_2)">
+                      <rect width="70" height="50" rx="12" fill="#0068ff" />
+                      <path d="M 35 50 L 30 58 L 22 50 Z" fill="#0068ff" />
+                      <path
+                        d="M 35 15 C 32 10, 24 10, 24 18 C 24 24, 35 32, 35 32 C 35 32, 46 24, 46 18 C 46 10, 38 10, 35 15 Z"
+                        fill="#ffeb3b" />
+                    </g>
+                    <g transform="translate(80, 20) scale(0.85)">
+                      <text font-size="20">👍</text>
+                    </g>
+                    <g transform="translate(145, 110) scale(0.85)">
+                      <text font-size="20">🔥</text>
+                    </g>
+                    <g transform="translate(60, 115) scale(0.85)">
+                      <text font-size="20">🎉</text>
+                    </g>
+                    <defs>
+                      <filter id="dropShadow_2" x="-10" y="-10" width="240" height="200" filterUnits="userSpaceOnUse">
+                        <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000000" flood-opacity="0.25" />
+                      </filter>
+                    </defs>
+                  </svg>
+                </div>
+                <h3 class="slide-title">Trò chuyện nhóm tiện lợi</h3>
+                <p class="slide-desc">Tạo nhóm chat, gọi thoại và chia sẻ khoảnh khắc với đồng nghiệp, bạn bè cực kỳ dễ
+                  dàng.</p>
+              </div>
+
+              <!-- Slide 3 -->
+              <div class="carousel-slide">
+                <div class="slide-ill">
+                  <!-- SVG for Slide 3 -->
+                  <svg width="240" height="180" viewBox="0 0 240 180" fill="none" xmlns="http://www.w3.org/2000/svg"
+                    style="overflow: visible;">
+                    <circle cx="120" cy="90" r="50" stroke="#00c49f" stroke-width="1.5" stroke-dasharray="6 4"
+                      stroke-opacity="0.5" fill="none" />
+                    <g filter="url(#dropShadow_3)" transform="translate(90, 50)">
+                      <path d="M 15 25 L 15 15 C 15 5, 45 5, 45 15 L 45 25" stroke="#ffffff" stroke-width="5"
+                        fill="none" stroke-linecap="round" />
+                      <path d="M 5 25 L 55 25 L 55 50 C 55 68, 30 80, 30 80 C 30 80, 5 68, 5 50 Z" fill="#00c49f" />
+                      <circle cx="30" cy="45" r="5" fill="#ffffff" />
+                      <path d="M 30 50 L 30 62" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
+                    </g>
+                    <g transform="translate(155, 60) rotate(-45) scale(0.9)" filter="url(#dropShadow_3)">
+                      <circle cx="10" cy="10" r="6" stroke="#ffd43b" stroke-width="2.5" fill="none" />
+                      <path d="M 16 10 L 32 10 M 24 10 L 24 16 M 28 10 L 28 16" stroke="#ffd43b" stroke-width="2.5"
+                        stroke-linecap="round" />
+                    </g>
+                    <defs>
+                      <filter id="dropShadow_3" x="-10" y="-10" width="240" height="200" filterUnits="userSpaceOnUse">
+                        <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000000" flood-opacity="0.25" />
+                      </filter>
+                    </defs>
+                  </svg>
+                </div>
+                <h3 class="slide-title">Trò chuyện an toàn, bảo mật tuyệt đối.</h3>
+                <p class="slide-desc">Nền tảng giao tiếp riêng tư: mã hóa dữ liệu, bảo vệ tin nhắn và cuộc gọi của bạn
+                  khỏi mọi rủi ro rò rỉ thông tin.</p>
+              </div>
+
+              <!-- Slide 4 -->
+              <div class="carousel-slide">
+                <div class="slide-ill">
+                  <!-- SVG for Slide 4 -->
+                  <svg width="240" height="180" viewBox="0 0 240 180" fill="none" xmlns="http://www.w3.org/2000/svg"
+                    style="overflow: visible;">
+                    <path d="M 55 90 A 30 30 0 0 1 185 90" stroke="#0068ff" stroke-width="2" stroke-dasharray="2 3"
+                      opacity="0.6" fill="none" />
+                    <g transform="translate(60, 45)" filter="url(#dropShadow_4)">
+                      <rect width="100" height="65" rx="6" fill="#1e222b" stroke="#4e5361" stroke-width="2" />
+                      <rect x="4" y="4" width="92" height="57" rx="3" fill="#2d323f" />
+                      <circle cx="50" cy="30" r="16" fill="#0068ff" />
+                      <text x="50" y="36" font-size="18" text-anchor="middle">🦸</text>
+                      <path d="M 35 65 L 65 65 L 75 75 L 25 75 Z" fill="#4e5361" />
+                    </g>
+                    <g transform="translate(140, 75)" filter="url(#dropShadow_4)">
+                      <rect width="32" height="60" rx="6" fill="#1e222b" stroke="#4e5361" stroke-width="2" />
+                      <rect x="3" y="6" width="26" height="48" rx="2" fill="#ffeb3b" />
+                      <text x="16" y="32" font-size="16" text-anchor="middle">🤖</text>
+                    </g>
+                    <defs>
+                      <filter id="dropShadow_4" x="-10" y="-10" width="240" height="200" filterUnits="userSpaceOnUse">
+                        <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000000" flood-opacity="0.25" />
+                      </filter>
+                    </defs>
+                  </svg>
+                </div>
+                <h3 class="slide-title">Cuộc gọi chất lượng cao</h3>
+                <p class="slide-desc">Gặp gỡ, đàm thoại thoại và chia sẻ video trực tuyến sắc nét mọi lúc, mọi nơi.</p>
+              </div>
+            </div>
+          </div>
+
+          <button class="carousel-arrow next" id="welcomeNextBtn"><i class="ti ti-chevron-right"></i></button>
+        </div>
+
+        <div class="carousel-dots" id="welcomeCarouselDots">
+          <span class="carousel-dot active" data-index="0"></span>
+          <span class="carousel-dot" data-index="1"></span>
+          <span class="carousel-dot" data-index="2"></span>
+          <span class="carousel-dot" data-index="3"></span>
+        </div>
+      </div>
+
+      <div class="chat-window hidden" id="chatWindow">
+        <div class="chat-header">
+          <button class="icon-btn back-btn" id="backBtn"><i class="ti ti-arrow-left"></i></button>
+          <div class="chat-header-info" id="chatHeaderInfo">
+            <div class="avatar" id="chatAvatar">?</div>
+            <div>
+              <div class="chat-name" id="chatName">Tên</div>
+              <div class="chat-status" id="chatStatus">Đang hoạt động</div>
+            </div>
+          </div>
+          <div class="chat-header-actions">
+            <button class="icon-btn" id="voiceCallBtn" title="Gọi thoại"><i class="ti ti-phone"></i></button>
+            <button class="icon-btn" id="videoCallBtn" title="Gọi video"><i class="ti ti-video"></i></button>
+            <button class="icon-btn" id="moreBtn" title="Thêm"><i class="ti ti-dots-vertical"></i></button>
+            <div class="header-dropdown hidden" id="headerDropdown">
+              <button class="dropdown-item" id="clearChatBtn">
+                <i class="ti ti-trash"></i>
+                <span>Xóa toàn bộ chat</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="messages-area" id="messagesArea"></div>
+
+        <div class="input-area">
+          <div class="input-tools">
+            <button class="tool-btn" id="stickerBtn" title="Sticker"><i class="ti ti-mood-smile"></i></button>
+            <button class="tool-btn" id="imageBtn" title="Ảnh"><i class="ti ti-photo"></i></button>
+            <input type="file" id="imageInput" accept="image/*" hidden />
+          </div>
+          <div class="msg-input-wrap">
+            <textarea id="msgInput" placeholder="Nhập tin nhắn..." rows="1"></textarea>
+          </div>
+          <button class="tool-btn voice-btn" id="voiceMsgBtn" title="Tin nhắn thoại"><i
+              class="ti ti-microphone"></i></button>
+          <button class="send-btn" id="sendBtn"><i class="ti ti-send"></i></button>
+        </div>
+      </div>
+    </main>
+
+    <div class="right-panel hidden" id="rightPanel">
+      <div class="panel-header">
+        <span>Thông tin</span>
+        <button class="icon-btn" id="closePanelBtn"><i class="ti ti-x"></i></button>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </div>
+  </div>
+
+  <div class="sticker-picker hidden" id="stickerPicker">
+    <div class="sticker-header">
+      <span>Sticker & Emoji</span>
+      <button class="icon-btn" id="closeStickerBtn"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="sticker-tabs">
+      <button class="stk-tab active" data-cat="emoji">😀 Emoji</button>
+      <button class="stk-tab" data-cat="animals">🐱 Thú cưng</button>
+      <button class="stk-tab" data-cat="food">🍜 Đồ ăn</button>
+      <button class="stk-tab" data-cat="study">📚 Học tập</button>
+      <button class="stk-tab" data-cat="feelings">❤️ Cảm xúc</button>
+    </div>
+    <div class="sticker-grid" id="stickerGrid"></div>
+  </div>
+
+  <div class="call-modal hidden" id="callModal">
+    <div class="call-container">
+      <!-- Remote video: toàn màn hình -->
+      <video id="remoteVideo" autoplay playsinline></video>
+      <!-- Placeholder khi chưa có remote video -->
+      <div class="remote-placeholder" id="remotePlaceholder">
+        <div class="avatar call-avatar" id="callAvatar">?</div>
+        <div class="call-name" id="callName">Tên</div>
+      </div>
+      <!-- Local video: góc nhỏ, có thể kéo -->
+      <div class="local-video-wrap" id="localVideoWrap">
+        <video id="localVideo" autoplay playsinline muted></video>
+        <div class="local-video-label">Bạn</div>
+      </div>
+      <!-- Overlay thông tin & điều khiển -->
+      <div class="call-overlay">
+        <div class="call-info-bar">
+          <div class="call-peer-name" id="callPeerName">Tên</div>
+          <div class="call-status" id="callStatus">Đang đổ chuông...</div>
+          <div class="call-timer hidden" id="callTimer">
+            <span class="call-timer-dot"></span>
+            <span id="callTimerDisplay">00:00</span>
+          </div>
+        </div>
+        <!-- Nút điều khiển -->
+        <div class="call-controls">
+          <div class="call-ctrl-group">
+            <button class="call-btn" id="toggleMicBtn" title="Tắt/bật mic">
+              <i class="ti ti-microphone"></i>
+              <span>Micro</span>
+            </button>
+            <button class="call-btn" id="toggleCamBtn" title="Tắt/bật camera">
+              <i class="ti ti-video"></i>
+              <span>Camera</span>
+            </button>
+            <button class="call-btn" id="toggleScreenBtn" title="Chia sẻ màn hình">
+              <i class="ti ti-screen-share"></i>
+              <span>Màn hình</span>
+            </button>
+          </div>
+          <button class="call-btn danger end-call-btn" id="endCallBtn" title="Kết thúc">
+            <i class="ti ti-phone-off"></i>
+            <span>Kết thúc</span>
+          </button>
+        </div>
+      </div>
+      <!-- Badge trạng thái kết nối -->
+      <div class="conn-status-badge" id="connStatusBadge">
+        <span class="conn-dot"></span>
+        <span id="connStatusText">Đang kết nối...</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="incoming-call hidden" id="incomingCall">
+    <div class="incoming-inner">
+      <div class="avatar incoming-avatar" id="incomingAvatar">?</div>
+      <div class="incoming-name" id="incomingName">Tên</div>
+      <div class="incoming-type" id="incomingType">Cuộc gọi video</div>
+      <div class="incoming-btns">
+        <button class="call-btn danger" id="rejectCallBtn"><i class="ti ti-phone-off"></i><span>Từ chối</span></button>
+        <button class="call-btn success" id="acceptCallBtn"><i class="ti ti-phone-incoming"></i><span>Chấp
+            nhận</span></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay hidden" id="newGroupModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Tạo nhóm mới</h3>
+        <button class="icon-btn" id="closeGroupModal"><i class="ti ti-x"></i></button>
+      </div>
+      <div class="modal-body">
+        <label>Tên nhóm</label>
+        <input type="text" id="groupNameInput" placeholder="VD: Nhóm Đề Tài Web" class="modal-input" />
+        <label style="margin-top:14px;">Chọn thành viên</label>
+        <div id="membersList" class="members-list"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="main-btn" id="createGroupBtn"><i class="ti ti-users-plus"></i>Tạo nhóm</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay hidden" id="unfriendModal">
+    <div class="modal-box" style="max-width:380px;">
+      <div class="modal-header" style="border-bottom:2px solid #ffeaea;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div
+            style="width:36px;height:36px;background:#ffeaea;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;">
+            <i class="ti ti-user-minus" style="color:#e53935;"></i>
+          </div>
+          <h3>Xóa bạn bè</h3>
+        </div>
+        <button class="icon-btn" id="closeUnfriendModal"><i class="ti ti-x"></i></button>
+      </div>
+      <div class="modal-body" style="padding:20px;">
+        <div style="text-align:center;padding:10px 0 6px;">
+          <div id="unfriendAvatar" style="font-size:48px;margin-bottom:8px;">👤</div>
+          <div style="font-size:16px;font-weight:800;color:#172033;" id="unfriendName"></div>
+          <div style="font-size:13px;color:#9ca3af;margin-top:4px;" id="unfriendPhone"></div>
+        </div>
+        <div style="background:#fff8f8;border:1px solid #ffcdd2;border-radius:12px;padding:12px 14px;margin-top:14px;">
+          <p style="font-size:13px;color:#6b7280;line-height:1.7;margin:0;">
+            ⚠️ Bạn có chắc muốn <strong style="color:#e53935;">xóa kết bạn</strong> với người này?<br>
+            <span style="font-size:12px;">Lịch sử trò chuyện vẫn được giữ lại. Bạn có thể kết bạn lại sau.</span>
+          </p>
+        </div>
+      </div>
+      <div class="modal-footer" style="display:flex;gap:10px;">
+        <button class="panel-btn" id="cancelUnfriendBtn" style="flex:1;justify-content:center;"><i
+            class="ti ti-arrow-left"></i>Hủy bỏ</button>
+        <button class="main-btn" id="confirmUnfriendBtn" style="background:#e53935;flex:1;gap:8px;"><i
+            class="ti ti-user-minus"></i>Xác nhận xóa bạn</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast hidden" id="toast"></div>
+
+
+  <div id="backupUserList" class="backup-user-list"></div>
+  <div class="backup-footer" style="display: none !important;">
+    <i class="ti ti-refresh" style="font-size:14px;color:#9ca3af;"></i>
+    <span id="backupLastRefresh">Realtime từ File JSON</span>
+  </div>
+  </div>
+  </div>
+
+  <div class="new-user-toast hidden" id="newUserToast">
+    <div class="new-user-toast-inner">
+      <div class="new-user-toast-icon"><i class="ti ti-user-plus"></i></div>
+      <div class="new-user-toast-text">
+        <div class="new-user-toast-title">🎉 Thành viên mới đã đăng ký!</div>
+        <div class="new-user-toast-name" id="newUserToastName">...</div>
+      </div>
+      <button class="new-user-toast-close" onclick="document.getElementById('newUserToast').classList.add('hidden')"><i
+          class="ti ti-x"></i></button>
+    </div>
+  </div>
+
+
+  <audio id="storyLocalAudio" loop style="display:none;"></audio>
+
+  <!-- ===== DELETE POST CONFIRM MODAL ===== -->
+  <div class="modal-overlay hidden" id="deletePostModal">
+    <div class="modal-box" style="max-width:380px;">
+      <div class="modal-header" style="border-bottom:2px solid #ffeaea;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div
+            style="width:36px;height:36px;background:#ffeaea;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;">
+            <i class="ti ti-trash" style="color:#e53935;"></i>
+          </div>
+          <h3>Xóa bài viết</h3>
+        </div>
+        <button class="icon-btn" id="closeDeletePostModal"><i class="ti ti-x"></i></button>
+      </div>
+      <div class="modal-body" style="padding:20px;">
+        <div style="background:#fff8f8;border:1px solid #ffcdd2;border-radius:12px;padding:14px;text-align:center;">
+          <p style="font-size:14px;color:#6b7280;line-height:1.7;margin:0;">
+            ⚠️ Bạn có chắc muốn <strong style="color:#e53935;">xóa bài viết này</strong>?<br>
+            <span style="font-size:12px;">Hành động này không thể hoàn tác.</span>
+          </p>
+        </div>
+      </div>
+      <div class="modal-footer" style="display:flex;gap:10px;">
+        <button class="panel-btn" id="cancelDeletePostBtn" style="flex:1;justify-content:center;"><i
+            class="ti ti-arrow-left"></i>Hủy bỏ</button>
+        <button class="main-btn" id="confirmDeletePostBtn" style="background:#e53935;flex:1;gap:8px;"><i
+            class="ti ti-trash"></i>Xác nhận xóa</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    window.moduleLoaded = false;
+    setTimeout(function () {
+      if (!window.moduleLoaded) {
+        var loader = document.getElementById('fbLoading');
+        if (loader && loader.style.display !== 'none') {
+          loader.innerHTML = "<div style='color:white;text-align:center;padding:20px;z-index:99999;'><h2>Lỗi Tải Thư Viện</h2><p>Không thể tải thư viện Firebase. Trình duyệt đã chặn lệnh import.<br><br>Nguyên nhân thường gặp:<br>1. Bạn đang mở file trực tiếp (file://). Vui lòng dùng một Web Server (như Live Server) để mở.<br>2. Mất kết nối mạng.<br>3. Bị chặn bởi tiện ích mở rộng.</p></div>";
+        }
+      }
+    }, 4000);
+  </script>
+  <div id="profileModal"
+    style="position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;padding:20px;"
+    class="hidden">
+    <div style="background:white;border-radius:24px;padding:32px;width:100%;max-width:400px;color:#172033;">
+      <h2 style="margin-bottom:20px;font-size:22px;font-weight:800;">Thông tin cá nhân</h2>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;">
+        <div id="editAvatar"
+          style="font-size:48px;cursor:pointer;width:80px;height:80px;border-radius:50%;background:#f0f4ff;display:flex;align-items:center;justify-content:center;border:2px solid #0068ff;">
+          ?</div>
+        <div style="font-size:13px;color:#6b7280;">Nhấn vào hình để đổi Avatar (ngẫu nhiên)</div>
+      </div>
+      <div style="margin-bottom:16px;">
+        <label style="display:block;margin-bottom:8px;font-size:14px;font-weight:600;">Tên hiển thị</label>
+        <input id="editName" type="text"
+          style="width:100%;padding:12px;border:1px solid #dce5f5;border-radius:12px;font-size:14px;outline:none;" />
+      </div>
+      <div style="margin-bottom:24px;">
+        <label style="display:block;margin-bottom:8px;font-size:14px;font-weight:600;">Số điện thoại</label>
+        <input id="editPhone" type="text"
+          style="width:100%;padding:12px;border:1px solid #dce5f5;border-radius:12px;font-size:14px;background:#fff;color:#172033;outline:none;" />
+      </div>
+      <div style="display:flex;gap:12px;">
+        <button id="btnSaveProfile"
+          style="flex:1;padding:12px;border:none;border-radius:12px;background:#0068ff;color:white;font-weight:700;cursor:pointer;">Lưu
+          thay đổi</button>
+        <button id="btnCloseProfile"
+          style="flex:1;padding:12px;border:none;border-radius:12px;background:#e5e7eb;color:#374151;font-weight:700;cursor:pointer;">Đóng</button>
+      </div>
+    </div>
+  </div>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+  <script>
+    window.moduleLoaded = true;
+
+    // ÉP BUỘC ẨN MÀN HÌNH LOADING NGAY LẬP TỨC VÀ FIX DOM
+    try {
+      document.getElementById('fbLoading').style.display = 'none';
+      document.getElementById('authScreen').classList.remove('hidden');
+
+      // Ép DOM có các nút bị thiếu để tránh lỗi JS Crash khi gán sự kiện
+      const hiddenDiv = document.createElement('div');
+      hiddenDiv.style.display = 'none';
+      hiddenDiv.innerHTML = `
+        <button id="btnSubmitStory"></button>
+        <button id="btnSubmitPost"></button>
+        <div id="myStoryAvatar"></div>
+        <button id="btnCreateStory"></button>
+        <div id="modalStory"></div>
+        <button id="btnCloseStoryModal"></button>
+        <input id="storyTextInput">
+        <input id="storyImgInput">
+        <input id="storyImgFile">
+        <input id="storyMusicFile">
+        <div id="storiesContainer"></div>
+        <div id="modalViewStory"></div>
+        <div id="storyViewerContent"></div>
+        <button id="btnCloseViewStory"></button>
+        <button id="btnCreatePost"></button>
+        <div id="modalPost"></div>
+        <button id="btnClosePostModal"></button>
+        <input id="postContentInput">
+        <input id="postImgInput">
+        <input id="postImgFile">
+        <input id="postMusicFile">
+        <div id="postsContainer"></div>
+        <div id="feedWindow"></div>
+      `;
+      document.body.appendChild(hiddenDiv);
+    } catch (e) { }
+
+    // Polyfill Firebase modular API using compat library for local file:// execution
+    const initializeApp = (config, name) => firebase.initializeApp(config, name);
+    const getDatabase = (app) => firebase.database(app);
+    const ref = (db, path) => db.ref(path);
+    const set = (r, val) => r.set(val);
+    const get = (r) => r.get();
+    const push = (r, val) => val === undefined ? r.push() : r.push(val);
+    const update = (r, val) => r.update(val);
+    const remove = (r) => r.remove();
+    const onValue = (r, cb, errCb) => { r.on('value', cb, errCb); return () => r.off('value', cb); };
+    const onChildAdded = (r, cb) => { r.on('child_added', cb); return () => r.off('child_added', cb); };
+    const off = (r) => r.off();
+    const serverTimestamp = () => firebase.database.ServerValue.TIMESTAMP;
+    const onDisconnect = (r) => r.onDisconnect();
+
+    // ================================================================
+    // FIREBASE CONFIG & INIT
+    // ================================================================
+
+    window.APP = {};
+    const APP = window.APP;
+
+    let db = null; // Firebase database instance
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCE9Q49LGTrP5xJzArNNmKfkJg5v2cO5Fk",
+      authDomain: "chatteam-84bef.firebaseapp.com",
+      databaseURL: "https://chatteam-84bef-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "chatteam-84bef",
+      storageBucket: "chatteam-84bef.firebasestorage.app",
+      messagingSenderId: "927580930370",
+      appId: "1:927580930370:web:f0ee4260a54d82eafcc8db",
+      measurementId: "G-1PKJFN5LR6"
+    };
+
+    async function tryInitFirebase(config) {
+      try {
+        const app = initializeApp(config, 'cntt1808_' + Date.now());
+        db = getDatabase(app);
+        return true; // Bỏ qua bước chờ kết nối để vào thẳng app
+      } catch (e) {
+        throw e;
+      }
+    }
+
+    async function boot() {
+      try {
+        await tryInitFirebase(firebaseConfig);
+      } catch (e) {
+        console.error("Firebase init failed:", e);
+      }
+      hideFbLoading();
+      try {
+        await startApp();
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function hideFbLoading() {
+      const loader = document.getElementById('fbLoading');
+      if (loader) loader.style.display = 'none';
+      const auth = document.getElementById('authScreen');
+      if (auth) auth.classList.remove('hidden');
+    }
+
+    // Chuyển đổi tệp chọn từ máy thành chuỗi Base64
+    function getBase64(file) {
+      return new Promise((resolve, reject) => {
+        if (!file) resolve("");
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+      });
+    }
+
+    // ================================================================
+    // DATABASE HELPERS (Firebase Realtime DB)
+    // ================================================================
+    const DB = {
+      async getUsers() {
+        const snap = await get(ref(db, 'users'));
+        if (!snap.exists()) return [];
+        return Object.values(snap.val());
+      },
+      async saveUser(user) {
+        await set(ref(db, 'users/' + user.id), user);
+      },
+      async updateUser(userId, data) {
+        await update(ref(db, 'users/' + userId), data);
+      },
+      listenUsers(cb) {
+        onValue(ref(db, 'users'), snap => {
+          cb(snap.exists() ? Object.values(snap.val()) : []);
+        });
+      },
+
+      setPresence(userId) {
+        const presRef = ref(db, 'presence/' + userId);
+        const connRef = ref(db, '.info/connected');
+        onValue(connRef, snap => {
+          if (snap.val() === true) {
+            set(presRef, { online: true, lastSeen: Date.now() });
+            onDisconnect(presRef).set({ online: false, lastSeen: Date.now() });
+          }
+        });
+      },
+      listenPresence(cb) {
+        onValue(ref(db, 'presence'), snap => {
+          const presenceMap = {};
+          if (snap.exists()) {
+            snap.forEach(child => {
+              presenceMap[child.key] = child.val();
+            });
+          }
+          cb(presenceMap);
+        });
+      },
+
+      async getMessages(convId) {
+        const snap = await get(ref(db, 'messages/' + convId));
+        if (!snap.exists()) return [];
+        return Object.values(snap.val()).sort((a, b) => a.time - b.time);
+      },
+      async saveMessage(convId, msg) {
+        await push(ref(db, 'messages/' + convId), msg);
+      },
+      listenMessages(convId, cb) {
+        return onChildAdded(ref(db, 'messages/' + convId), snap => {
+          cb(snap.val());
+        });
+      },
+      stopListenMessages(convId) {
+        off(ref(db, 'messages/' + convId));
+      },
+
+      async getFriends(userId) {
+        const snap = await get(ref(db, 'friends/' + userId));
+        if (!snap.exists()) return [];
+        return Object.keys(snap.val());
+      },
+      async addFriend(userId1, userId2) {
+        await update(ref(db, 'friends/' + userId1), { [userId2]: true });
+        await update(ref(db, 'friends/' + userId2), { [userId1]: true });
+      },
+      async removeFriend(userId1, userId2) {
+        await remove(ref(db, 'friends/' + userId1 + '/' + userId2));
+        await remove(ref(db, 'friends/' + userId2 + '/' + userId1));
+      },
+      listenFriends(userId, cb) {
+        onValue(ref(db, 'friends/' + userId), snap => {
+          cb(snap.exists() ? Object.keys(snap.val()) : []);
+        });
+      },
+
+      async getRequests() {
+        const snap = await get(ref(db, 'friendRequests'));
+        if (!snap.exists()) return [];
+        return Object.entries(snap.val()).map(([k, v]) => ({ id: k, ...v }));
+      },
+      async sendRequest(fromId, toId) {
+        const existing = await this.getRequests();
+        const dup = existing.find(r => r.fromId === fromId && r.toId === toId && r.status === 'pending');
+        if (dup) return;
+        const newRef = push(ref(db, 'friendRequests'));
+        await set(newRef, { fromId, toId, status: 'pending', time: Date.now() });
+      },
+      async updateRequest(reqId, status) {
+        await update(ref(db, 'friendRequests/' + reqId), { status });
+      },
+      async deleteRequest(reqId) {
+        await remove(ref(db, 'friendRequests/' + reqId));
+      },
+      listenRequests(cb) {
+        onValue(ref(db, 'friendRequests'), snap => {
+          cb(snap.exists() ? Object.entries(snap.val()).map(([k, v]) => ({ id: k, ...v })) : []);
+        });
+      },
+
+      async getGroups() {
+        const snap = await get(ref(db, 'groups'));
+        if (!snap.exists()) return [];
+        return Object.values(snap.val());
+      },
+      async saveGroup(group) {
+        await set(ref(db, 'groups/' + group.id), group);
+      },
+      async updateGroup(groupId, data) {
+        await update(ref(db, 'groups/' + groupId), data);
+      },
+      listenGroups(cb) {
+        onValue(ref(db, 'groups'), snap => {
+          cb(snap.exists() ? Object.values(snap.val()) : []);
+        });
+      },
+
+      listenPosts(cb) {
+        onValue(ref(db, 'posts'), snap => {
+          cb(snap.exists() ? Object.entries(snap.val()).map(([k, v]) => ({ id: k, ...v })) : []);
+        });
+      },
+      async savePost(post) {
+        const newRef = push(ref(db, 'posts'));
+        await set(newRef, post);
+      },
+      async updatePost(postId, data) {
+        await update(ref(db, 'posts/' + postId), data);
+      },
+      listenStories(cb) {
+        onValue(ref(db, 'stories'), snap => {
+          cb(snap.exists() ? Object.entries(snap.val()).map(([k, v]) => ({ id: k, ...v })) : []);
+        });
+      },
+      async saveStory(story) {
+        const newRef = push(ref(db, 'stories'));
+        await set(newRef, story);
+      },
+
+      // ── POST DELETE ──────────────────────────────────────────
+      async deletePost(postId) {
+        await remove(ref(db, 'posts/' + postId));
+      },
+
+      // ── CALL SIGNALING ───────────────────────────────────────
+      async createCall(callData) {
+        const newRef = push(ref(db, 'calls'));
+        await set(newRef, callData);
+        return newRef.key;
+      },
+      async updateCall(callId, data) {
+        await update(ref(db, 'calls/' + callId), data);
+      },
+      async getCall(callId) {
+        const snap = await get(ref(db, 'calls/' + callId));
+        return snap.exists() ? snap.val() : null;
+      },
+      listenCall(callId, cb) {
+        return onValue(ref(db, 'calls/' + callId), snap => cb(snap.val()));
+      },
+      listenCalls(myId, cb) {
+        return onValue(ref(db, 'calls'), snap => {
+          if (!snap.exists()) return;
+          snap.forEach(child => cb(child.key, child.val()));
+        });
+      },
+      async pushIceCandidate(callId, role, candidate) {
+        await push(ref(db, `calls/${callId}/candidates/${role}`), candidate);
+      },
+      listenIceCandidates(callId, role, cb) {
+        return onChildAdded(ref(db, `calls/${callId}/candidates/${role}`), snap => cb(snap.val()));
+      }
+    };
+
+    // ================================================================
+    // APP STATE
+    // ================================================================
+    APP.currentUser = null;
+    APP.activeConvId = null;
+    APP.activeConvType = null;
+    APP.activeConvTarget = null;
+
+    let _allUsers = [];
+    let _friendIds = [];
+    let _allRequests = [];
+    let _allGroups = [];
+    let _presenceMap = {};
+    let _msgUnsubscribe = null;
+    let _knownUserIds = new Set();
+
+    // ================================================================
+    // UTILS
+    // ================================================================
+    function escapeHtml(str) {
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+    function formatTime(ts) {
+      if (!ts) return '';
+      const d = new Date(ts);
+      const diff = new Date() - d;
+      if (diff < 60000) return 'Vừa xong';
+      if (diff < 3600000) return Math.floor(diff / 60000) + ' phút';
+      if (diff < 86400000) return d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
+      return d.getDate() + '/' + (d.getMonth() + 1);
+    }
+    function validPhone(p) { return /^0[0-9]{9}$/.test(p); }
+    function getConvId(uid1, uid2) { return [uid1, uid2].sort().join('_'); }
+    function isOnline(userId) {
+      const p = _presenceMap[userId];
+      if (!p) return false;
+      return p.online === true && (Date.now() - (p.lastSeen || 0)) < 60000;
+    }
+    function showToast(msg, type = 'info') {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = 'toast ' + type;
+      setTimeout(() => t.className = 'toast hidden', 3000);
+    }
+    function isFriend(uid) { return _friendIds.includes(uid); }
+    function hasPendingRequestTo(uid) {
+      return _allRequests.some(r => r.fromId === APP.currentUser.id && r.toId === uid && r.status === 'pending');
+    }
+    function hasPendingRequestFrom(uid) {
+      return _allRequests.some(r => r.fromId === uid && r.toId === APP.currentUser.id && r.status === 'pending');
+    }
+
+    // ================================================================
+    // AUTH
+    // ================================================================
+    const authScreen = document.getElementById('authScreen');
+    const chatScreen = document.getElementById('chatScreen');
+    const loginTab = document.getElementById('loginTab');
+    const registerTab = document.getElementById('registerTab');
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    const forgotForm = document.getElementById('forgotForm');
+    const msgEl = document.getElementById('message');
+
+    let forgotTargetUser = null;
+
+    function showForm(type) {
+      [loginForm, registerForm, forgotForm].forEach(f => f.classList.remove('active'));
+      [loginTab, registerTab].forEach(t => t.classList.remove('active'));
+      msgEl.textContent = ''; msgEl.className = 'message';
+      if (type === 'login') { loginForm.classList.add('active'); loginTab.classList.add('active'); }
+      if (type === 'register') { registerForm.classList.add('active'); registerTab.classList.add('active'); }
+      if (type === 'forgot') {
+        forgotForm.classList.add('active');
+        forgotTargetUser = null;
+        document.getElementById('forgotStep1').classList.remove('hidden');
+        document.getElementById('forgotStep2').classList.add('hidden');
+        document.getElementById('forgotDesc').textContent = 'Nhập số điện thoại để đặt lại mật khẩu';
+        document.getElementById('forgotPhone').value = '';
+        document.getElementById('forgotNewPassword').value = '';
+        document.getElementById('forgotConfirmNewPassword').value = '';
+      }
+    }
+    function showMsg(text, cls) { msgEl.textContent = text; msgEl.className = 'message ' + cls; }
+
+    loginTab.onclick = () => showForm('login');
+    registerTab.onclick = () => showForm('register');
+    document.getElementById('goRegister').onclick = () => showForm('register');
+    document.getElementById('goLogin').onclick = () => showForm('login');
+    document.getElementById('forgotBtn').onclick = () => showForm('forgot');
+    document.getElementById('backLogin').onclick = () => showForm('login');
+
+    forgotForm.addEventListener('submit', async e => {
+      e.preventDefault();
+
+      // BƯỚC 1: Kiểm tra Số điện thoại
+      if (!forgotTargetUser) {
+        const phone = document.getElementById('forgotPhone').value.trim();
+        if (!phone) { showMsg('Vui lòng nhập số điện thoại.', 'error'); return; }
+        showMsg('Đang kiểm tra số điện thoại...', '');
+        const users = await DB.getUsers();
+        const user = users.find(u => u && u.phone === phone);
+        if (!user) {
+          showMsg('Số điện thoại không tồn tại trên hệ thống.', 'error');
+          return;
+        }
+        forgotTargetUser = user;
+        showMsg('Xác minh thành công! Hãy nhập mật khẩu mới.', 'success');
+        document.getElementById('forgotStep1').classList.add('hidden');
+        document.getElementById('forgotStep2').classList.remove('hidden');
+        document.getElementById('forgotDesc').textContent = `Đặt lại mật khẩu cho tài khoản: ${user.name} (${phone})`;
+        return;
+      }
+
+      // BƯỚC 2: Đặt lại mật khẩu mới
+      const newPass = document.getElementById('forgotNewPassword').value.trim();
+      const confirmPass = document.getElementById('forgotConfirmNewPassword').value.trim();
+      if (!newPass || !confirmPass) { showMsg('Vui lòng nhập đầy đủ mật khẩu mới.', 'error'); return; }
+      if (newPass.length < 6) { showMsg('Mật khẩu mới phải từ 6 ký tự trở lên.', 'error'); return; }
+      if (newPass !== confirmPass) { showMsg('Mật khẩu mới nhập lại không khớp.', 'error'); return; }
+
+      showMsg('Đang đặt lại mật khẩu...', '');
+      try {
+        forgotTargetUser.password = newPass;
+        await DB.updateUser(forgotTargetUser.id, { password: newPass });
+        showMsg('Đặt lại mật khẩu thành công! Đang quay về đăng nhập...', 'success');
+        setTimeout(() => {
+          showForm('login');
+          document.getElementById('loginAccount').value = forgotTargetUser.phone;
+          document.getElementById('loginPassword').value = '';
+        }, 1500);
+      } catch (err) {
+        showMsg('Có lỗi xảy ra, vui lòng thử lại.', 'error');
+      }
+    });
+
+    loginForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      const account = document.getElementById('loginAccount').value.trim();
+      const password = document.getElementById('loginPassword').value.trim();
+      if (!account || !password) { showMsg('Vui lòng nhập đầy đủ thông tin.', 'error'); return; }
+      showMsg('Đang đăng nhập...', '');
+      const users = await DB.getUsers();
+      const user = users.find(u => u && (u.phone === account || (u.name && u.name.toLowerCase() === account.toLowerCase())));
+      if (!user) { showMsg('Không tìm thấy tài khoản.', 'error'); return; }
+      if (user.password !== password) { showMsg('Mật khẩu không đúng.', 'error'); return; }
+      APP.currentUser = user;
+      localStorage.setItem('cntt1808_session', user.id);
+      showMsg('Đăng nhập thành công! Chào ' + user.name, 'success');
+      setTimeout(enterChat, 800);
+    });
+
+    registerForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      const name = document.getElementById('regName').value.trim();
+      const phone = document.getElementById('regPhone').value.trim();
+      const password = document.getElementById('regPassword').value.trim();
+      const confirm = document.getElementById('regConfirm').value.trim();
+      if (!name || !phone || !password || !confirm) { showMsg('Vui lòng nhập đầy đủ.', 'error'); return; }
+      if (!validPhone(phone)) { showMsg('Số điện thoại không hợp lệ.', 'error'); return; }
+      if (password.length < 6) { showMsg('Mật khẩu phải ít nhất 6 ký tự.', 'error'); return; }
+      if (password !== confirm) { showMsg('Mật khẩu không khớp.', 'error'); return; }
+      showMsg('Đang tạo tài khoản...', '');
+      console.log("1. Starting user fetch");
+      try {
+        const users = await DB.getUsers();
+        console.log("2. Users fetched:", users);
+        if (users.some(u => u.phone === phone)) { showMsg('Số điện thoại đã được đăng ký.', 'error'); return; }
+        const avatars = ['🧑', '👩', '👦', '👧', '🧑‍💻', '👩‍💻', '👨‍🎓', '👩‍🎓', '🦸', '🧙'];
+        const newUser = {
+          id: 'u_' + Date.now(),
+          name, phone, password,
+          avatar: avatars[Math.floor(Math.random() * avatars.length)],
+          status: 'online',
+          registeredAt: Date.now()
+        };
+        console.log("3. Saving user:", newUser);
+        await DB.saveUser(newUser);
+        console.log("4. User saved successfully");
+        APP.currentUser = newUser;
+        localStorage.setItem('cntt1808_session', newUser.id);
+        showMsg('Đăng ký thành công! Đang đăng nhập...', 'success');
+        setTimeout(enterChat, 1000);
+      } catch (err) {
+        console.error("REGISTRATION ERROR:", err);
+      }
+    });
+
+    // ================================================================
+    // START APP
+    // ================================================================
+    async function startApp() {
+      authScreen.classList.remove('hidden');
+      const savedSession = localStorage.getItem('cntt1808_session');
+      if (savedSession) {
+        const users = await DB.getUsers();
+        const user = users.find(u => u.id === savedSession);
+        if (user) {
+          APP.currentUser = user;
+          enterChat();
+          return;
+        }
+      }
+    }
+
+    function enterChat() {
+      authScreen.classList.add('hidden');
+      chatScreen.classList.remove('hidden');
+      initChat();
+    }
+
+    async function initChat() {
+      const u = APP.currentUser;
+      document.getElementById('myName').textContent = u.name;
+      document.getElementById('myAvatar').textContent = u.avatar;
+      document.getElementById('myStoryAvatar').textContent = u.avatar;
+
+      DB.setPresence(u.id);
+
+      DB.listenUsers(users => {
+        // Chỉ giữ lại người dùng thực, loại bỏ logic "if (!users.find... chatbot)"
+        users = users.filter(usr => usr && usr.name && usr.phone);
+
+        users.forEach(user => {
+          if (!_knownUserIds.has(user.id) && user.id !== u.id) {
+            _knownUserIds.add(user.id);
+            if (_allUsers.length > 0) {
+              showNewUserNotification(user);
+            }
+          }
+          _knownUserIds.add(user.id);
+        });
+        _allUsers = users;
+        renderConvList(document.getElementById('searchInput')?.value || '');
+      });
+
+      DB.listenPresence(presenceMap => {
+        _presenceMap = presenceMap;
+        renderConvList(document.getElementById('searchInput')?.value || '');
+      });
+
+      DB.listenFriends(u.id, friendIds => {
+        _friendIds = friendIds;
+        renderConvList(document.getElementById('searchInput')?.value || '');
+      });
+
+      DB.listenRequests(reqs => {
+        _allRequests = reqs;
+        renderConvList(document.getElementById('searchInput')?.value || '');
+      });
+
+      DB.listenGroups(groups => {
+        _allGroups = groups;
+        renderConvList(document.getElementById('searchInput')?.value || '');
+      });
+
+      DB.listenPosts(posts => { renderPostsTrack(posts); });
+      DB.listenStories(stories => { renderStoriesTrack(stories); });
+      listenIncomingCalls();
+    }
+
+    document.getElementById('logoutBtn').onclick = () => {
+      if (APP.currentUser) {
+        set(ref(db, 'presence/' + APP.currentUser.id), { online: false, lastSeen: Date.now() });
+      }
+      localStorage.removeItem('cntt1808_session');
+      APP.currentUser = null;
+      chatScreen.classList.add('hidden');
+      authScreen.classList.remove('hidden');
+      showForm('login');
+      if (_msgUnsubscribe) { _msgUnsubscribe(); _msgUnsubscribe = null; }
+    };
+
+    // ================================================================
+    document.getElementById('sidebarUser').onclick = () => {
+      if (!APP.currentUser) return;
+      document.getElementById('editAvatar').textContent = APP.currentUser.avatar;
+      document.getElementById('editName').value = APP.currentUser.name;
+      document.getElementById('editPhone').value = APP.currentUser.phone;
+      document.getElementById('profileModal').classList.remove('hidden');
+    };
+
+    const pAvatars = ['🧑', '👩', '👦', '👧', '🧑‍💻', '👩‍💻', '👨‍🎓', '👩‍🎓', '🦸', '🧙'];
+    document.getElementById('editAvatar').onclick = () => {
+      const cur = document.getElementById('editAvatar').textContent;
+      let nx = (pAvatars.indexOf(cur) + 1) % pAvatars.length;
+      document.getElementById('editAvatar').textContent = pAvatars[nx];
+    };
+
+    document.getElementById('btnCloseProfile').onclick = () => {
+      document.getElementById('profileModal').classList.add('hidden');
+    };
+
+    document.getElementById('btnSaveProfile').onclick = async () => {
+      if (!APP.currentUser) return;
+      const newName = document.getElementById('editName').value.trim();
+      const newPhone = document.getElementById('editPhone').value.trim();
+      if (!newName) { showToast('Tên không được để trống!', 'error'); return; }
+      if (!validPhone(newPhone)) { showToast('Số điện thoại không hợp lệ. Phải bắt đầu 0 và đủ 10 số.', 'error'); return; }
+
+      APP.currentUser.name = newName;
+      APP.currentUser.avatar = document.getElementById('editAvatar').textContent;
+      APP.currentUser.phone = newPhone;
+
+      await DB.updateUser(APP.currentUser.id, {
+        name: APP.currentUser.name,
+        avatar: APP.currentUser.avatar,
+        phone: APP.currentUser.phone
+      });
+
+      document.getElementById('myName').textContent = APP.currentUser.name;
+      document.getElementById('myAvatar').textContent = APP.currentUser.avatar;
+      const sa = document.getElementById('myStoryAvatar');
+      if (sa) sa.textContent = APP.currentUser.avatar;
+
+      document.getElementById('profileModal').classList.add('hidden');
+      showToast('Đã lưu thông tin cá nhân!', 'success');
+    };
+
+    // ================================================================
+    // SỬA ĐỔI 1 & 2: HỆ THỐNG ĐĂNG TIN NGẮN (STORY) & BÀI VIẾT (POST) KÈM NHẠC
+    // ================================================================
+
+    // XỬ LÝ ĐĂNG TIN NGẮN (STORY) KÈM NHẠC CỤC BỘ
+    document.getElementById('btnCreateStory').onclick = () => {
+      document.getElementById('modalStory').classList.remove('hidden');
+    };
+    document.getElementById('btnCloseStoryModal').onclick = () => {
+      document.getElementById('modalStory').classList.add('hidden');
+    };
+    document.getElementById('btnSubmitStory').onclick = async () => {
+      const text = document.getElementById('storyTextInput').value.trim();
+      let imgUrl = document.getElementById('storyImgInput').value.trim();
+      const imgFile = document.getElementById('storyImgFile').files[0];
+      const musicFile = document.getElementById('storyMusicFile').files[0];
+
+      if (!text && !imgUrl && !imgFile) {
+        showToast('Vui lòng nhập văn bản hoặc chọn ảnh cho Story!', 'error');
+        return;
+      }
+
+      showToast('Đang xử lý dữ liệu tải lên...', 'info');
+
+      if (imgFile) {
+        try {
+          imgUrl = await getBase64(imgFile);
+        } catch (err) {
+          showToast('Lỗi xử lý file ảnh!', 'error');
+          return;
+        }
+      }
+
+      let localMusicData = "";
+      if (musicFile) {
+        try {
+          localMusicData = await getBase64(musicFile);
+        } catch (err) {
+          showToast('Lỗi mã hóa tệp âm thanh!', 'error');
+          return;
+        }
+      }
+
+      const story = {
+        userId: APP.currentUser.id,
+        userName: APP.currentUser.name,
+        userAvatar: APP.currentUser.avatar,
+        text: text,
+        image: imgUrl,
+        localMusic: localMusicData,
+        time: Date.now()
+      };
+
+      await DB.saveStory(story);
+      document.getElementById('storyTextInput').value = '';
+      document.getElementById('storyImgInput').value = '';
+      document.getElementById('storyImgFile').value = '';
+      document.getElementById('storyMusicFile').value = '';
+      document.getElementById('modalStory').classList.add('hidden');
+      showToast('Đăng Story thành công!', 'success');
+    };
+
+    function renderStoriesTrack(stories) {
+      const container = document.getElementById('storiesContainer');
+      container.innerHTML = '';
+      const dayAgo = Date.now() - 24 * 60 * 60 * 1000;
+      const validStories = stories.filter(s => s.time > dayAgo).sort((a, b) => b.time - a.time);
+
+      if (!validStories.length) {
+        container.innerHTML = '<span style="color:#9ca3af; font-size:12px; margin-left:10px; align-self:center;">Chưa có tin mới</span>';
+        return;
+      }
+
+      validStories.forEach(s => {
+        const div = document.createElement('div');
+        div.className = 'story-item';
+        let musicIconHtml = s.localMusic ? `<span class="plus-icon" style="background:#1f9d55; transform: translate(25%, 25%);"><i class="ti ti-music"></i></span>` : '';
+
+        div.innerHTML = `
+        <div class="story-avatar-wrap unread">
+          <div class="story-avatar">${s.userAvatar || '👤'}</div>
+          ${musicIconHtml}
+        </div>
+        <span class="story-username">${s.userName}</span>
+      `;
+        div.onclick = () => openStoryViewer(s);
+        container.appendChild(div);
+      });
+    }
+
+    function openStoryViewer(story) {
+      const viewer = document.getElementById('modalViewStory');
+      const content = document.getElementById('storyViewerContent');
+      const audioPlayer = document.getElementById('storyLocalAudio');
+
+      audioPlayer.pause();
+      audioPlayer.src = "";
+
+      content.innerHTML = `
+      <div style="background:${story.image ? `url('${story.image}')` : '#0068ff'}; background-size: cover; background-position: center; min-height: 480px; border-radius:18px; display:flex; flex-direction:column; justify-content:space-between; padding:20px; box-shadow: 0 4px 24px rgba(0,0,0,0.5);">
+         <div style="display:flex; align-items:center; gap:10px; background: rgba(0,0,0,0.4); padding:8px 12px; border-radius:12px; text-align:left;">
+            <span style="font-size:24px;">${story.userAvatar}</span>
+            <div>
+               <div style="font-weight:800; font-size:14px;">${story.userName}</div>
+               <div style="font-size:11px; opacity:0.8;">${formatTime(story.time)}</div>
+            </div>
+         </div>
+         <div style="font-size:20px; font-weight:700; text-shadow:0 2px 4px rgba(0,0,0,0.8); background:rgba(0,0,0,0.3); padding:14px; border-radius:12px; line-height:1.6;">
+            ${escapeHtml(story.text || '')}
+         </div>
+         ${story.localMusic ? `
+           <div style="background: rgba(0,0,0,0.6); padding: 8px 12px; border-radius: 20px; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; margin: 0 auto; color: #4caf50; font-weight: bold;">
+             <i class="ti ti-music-disc" style="animation: spin 3s linear infinite;"></i> Đang phát nhạc nền thiết bị
+           </div>
+         ` : '<div></div>'}
+      </div>
+    `;
+      viewer.classList.remove('hidden');
+
+      if (story.localMusic) {
+        audioPlayer.src = story.localMusic;
+        audioPlayer.play().catch(err => console.log('Chờ tương tác người dùng để phát nhạc.'));
+      }
+    }
+    document.getElementById('btnCloseViewStory').onclick = () => {
+      document.getElementById('modalViewStory').classList.add('hidden');
+      document.getElementById('storyLocalAudio').pause();
+    };
+
+    // XỬ LÝ ĐĂNG BÀI VIẾT (POST) KÈM NHẠC CỤC BỘ
+    document.getElementById('btnCreatePost').onclick = () => {
+      document.getElementById('modalPost').classList.remove('hidden');
+    };
+    document.getElementById('btnClosePostModal').onclick = () => {
+      document.getElementById('modalPost').classList.add('hidden');
+    };
+    document.getElementById('btnSubmitPost').onclick = async () => {
+      const text = document.getElementById('postContentInput').value.trim();
+      let imgUrl = document.getElementById('postImgInput').value.trim();
+      const imgFile = document.getElementById('postImgFile').files[0];
+      const musicFile = document.getElementById('postMusicFile').files[0];
+
+      if (!text) { showToast('Vui lòng điền nội dung bài viết!', 'error'); return; }
+
+      showToast('Đang đăng tải bài viết...', 'info');
+
+      if (imgFile) {
+        try {
+          imgUrl = await getBase64(imgFile);
+        } catch (err) {
+          showToast('Lỗi xử lý file hình ảnh!', 'error');
+          return;
+        }
+      }
+
+      let localMusicData = "";
+      if (musicFile) {
+        try {
+          localMusicData = await getBase64(musicFile);
+        } catch (err) {
+          showToast('Lỗi xử lý file âm thanh!', 'error');
+          return;
+        }
+      }
+
+      const post = {
+        userId: APP.currentUser.id,
+        userName: APP.currentUser.name,
+        userAvatar: APP.currentUser.avatar,
+        text: text,
+        image: imgUrl,
+        localMusic: localMusicData,
+        time: Date.now(),
+        likes: 0
+      };
+
+      await DB.savePost(post);
+      document.getElementById('postContentInput').value = '';
+      document.getElementById('postImgInput').value = '';
+      document.getElementById('postImgFile').value = '';
+      document.getElementById('postMusicFile').value = '';
+      document.getElementById('modalPost').classList.add('hidden');
+      showToast('Đã đăng bài viết mới thành công!', 'success');
+    };
+
+    function renderPostsTrack(posts) {
+      const container = document.getElementById('postsContainer');
+      container.innerHTML = '';
+      const sortedPosts = posts.sort((a, b) => b.time - a.time);
+
+      if (!sortedPosts.length) {
+        container.innerHTML = '<div class="empty-list"><i class="ti ti-news"></i><p>Chưa có bài viết nào trên bảng tin</p></div>';
+        return;
+      }
+
+      sortedPosts.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'post-card';
+        let imgHtml = p.image ? `<div class="post-img-wrap"><img src="${p.image}" alt="Post image" /></div>` : '';
+
+        let musicPlayerHtml = p.localMusic ? `
+        <div style="margin-top:12px; display:flex; flex-direction:column; gap:6px; background:#f0f4ff; padding:10px; border-radius:12px; border:1px solid #dce5f5;">
+          <div style="font-size:12px; font-weight:700; color:#0068ff; display:flex; align-items:center; gap:4px;">
+            <i class="ti ti-music"></i> Nhạc nền đính kèm thiết bị
+          </div>
+          <audio controls src="${p.localMusic}" style="width:100%; height:32px;"></audio>
+        </div>
+      ` : '';
+
+        const isAuthor = p.userId === APP.currentUser?.id;
+        const deleteBtn = isAuthor ? `
+        <button class="interact-btn" id="del_${p.id}" style="flex:none; color:#e53935;" title="Xóa bài viết">
+          <i class="ti ti-trash"></i>
+        </button>` : '';
+
+        card.innerHTML = `
+        <div class="post-user-info">
+          <div style="display:flex;align-items:center;gap:12px;flex:1;">
+            <div class="avatar">${p.userAvatar || '🧑‍💻'}</div>
+            <div>
+              <div class="post-author">${p.userName}</div>
+              <div class="post-time">${formatTime(p.time)}</div>
+            </div>
+          </div>
+          ${isAuthor ? `<button class="interact-btn post-delete-btn" data-pid="${p.id}" style="flex:none; padding:6px 10px; color:#e53935; border-radius:10px;" title="Xóa bài viết"><i class="ti ti-trash"></i></button>` : ''}
+        </div>
+        <div class="post-text-content" style="margin-top:10px;">${escapeHtml(p.text)}</div>
+        ${imgHtml}
+        ${musicPlayerHtml}
+        <div class="post-interactions">
+          <button class="interact-btn like-btn" id="like_${p.id}"><i class="ti ti-heart"></i> Thích (${p.likes || 0})</button>
+          <button class="interact-btn" onclick="showToast('Tính năng bình luận đang phát triển!','info')"><i class="ti ti-brand-telegram"></i> Bình luận</button>
+        </div>
+      `;
+
+        const btnLike = card.querySelector(`#like_${p.id}`);
+        btnLike.onclick = async () => {
+          let currentLikes = p.likes || 0;
+          await DB.updatePost(p.id, { likes: currentLikes + 1 });
+        };
+
+        if (isAuthor) {
+          const btnDel = card.querySelector(`.post-delete-btn[data-pid="${p.id}"]`);
+          btnDel.onclick = () => openDeletePostModal(p.id);
+        }
+
+        container.appendChild(card);
+      });
+    }
+
+    // ── DELETE POST MODAL ────────────────────────────────────────────
+    let _deletePostTargetId = null;
+    function openDeletePostModal(postId) {
+      _deletePostTargetId = postId;
+      document.getElementById('deletePostModal').classList.remove('hidden');
+    }
+    document.getElementById('closeDeletePostModal').onclick = () => {
+      document.getElementById('deletePostModal').classList.add('hidden');
+      _deletePostTargetId = null;
+    };
+    document.getElementById('cancelDeletePostBtn').onclick = () => {
+      document.getElementById('deletePostModal').classList.add('hidden');
+      _deletePostTargetId = null;
+    };
+    document.getElementById('confirmDeletePostBtn').onclick = async () => {
+      if (!_deletePostTargetId) return;
+      try {
+        await DB.deletePost(_deletePostTargetId);
+        showToast('Đã xóa bài viết thành công!', 'success');
+      } catch (e) {
+        showToast('Lỗi xóa bài viết!', 'error');
+      }
+      document.getElementById('deletePostModal').classList.add('hidden');
+      _deletePostTargetId = null;
+    };
+
+    // ================================================================
+    // SỬA ĐỔI 3: HỆ THỐNG TẠO NHÓM CHAT MỚI (FIXED)
+    // ================================================================
+    document.getElementById('newGroupBtn').onclick = async () => {
+      const listEl = document.getElementById('membersList');
+      listEl.innerHTML = '<p style="font-size:12px; color:#6b7280;">Đang tải danh sách bạn bè...</p>';
+      document.getElementById('newGroupModal').classList.remove('hidden');
+
+      // Lọc danh sách người dùng đã là bạn bè để hiển thị vào hộp thoại tạo nhóm
+      const allUsers = await DB.getUsers();
+      const myFriends = allUsers.filter(u => _friendIds.includes(u.id) && u.id !== APP.currentUser.id);
+
+      listEl.innerHTML = '';
+      if (!myFriends.length) {
+        listEl.innerHTML = '<p style="font-size:13px; color:#e53935; padding:10px 0;">Bạn cần kết bạn trước khi tạo nhóm!</p>';
+        return;
+      }
+
+      myFriends.forEach(u => {
+        const div = document.createElement('div');
+        div.className = 'member-item';
+        div.style.display = 'flex';
+        div.style.alignItems = 'center';
+        div.style.gap = '10px';
+        div.innerHTML = `
+        <input type="checkbox" value="${u.id}" id="cb_${u.id}" />
+        <label for="cb_${u.id}" style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:normal; margin:0;">
+          <span>${u.avatar || '👤'}</span>
+          <strong>${u.name}</strong>
+        </label>
+      `;
+        listEl.appendChild(div);
+      });
+    };
+
+    document.getElementById('closeGroupModal').onclick = () => {
+      document.getElementById('newGroupModal').classList.add('hidden');
+    };
+
+    document.getElementById('createGroupBtn').onclick = async () => {
+      const groupName = document.getElementById('groupNameInput').value.trim();
+      if (!groupName) { showToast('Vui lòng điền tên nhóm chat!', 'error'); return; }
+
+      const checkboxes = document.querySelectorAll('#membersList input[type="checkbox"]:checked');
+      const selectedMemberIds = Array.from(checkboxes).map(cb => cb.value);
+
+      // Người tạo nhóm tự động nằm trong danh sách thành viên nhóm
+      selectedMemberIds.push(APP.currentUser.id);
+
+      if (selectedMemberIds.length < 2) {
+        showToast('Nhóm chat phải có tối thiểu 2 thành viên trở lên!', 'error');
+        return;
+      }
+
+      const newGroupId = 'g_' + Date.now();
+      const newGroup = {
+        id: newGroupId,
+        name: groupName,
+        creatorId: APP.currentUser.id,
+        members: selectedMemberIds,
+        lastMsg: 'Nhóm vừa được thiết lập',
+        lastTime: Date.now()
+      };
+
+      await DB.saveGroup(newGroup);
+      document.getElementById('groupNameInput').value = '';
+      document.getElementById('newGroupModal').classList.add('hidden');
+      showToast(`Tạo thành công nhóm chat "${groupName}"!`, 'success');
+    };
+
+    // ================================================================
+    // SIDEBAR TAB NAVIGATION CONTROLLER
+    // ================================================================
+    document.querySelectorAll('.s-tab').forEach(tab => {
+      tab.onclick = function () {
+        document.querySelectorAll('.s-tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+
+        const tabName = this.dataset.tab;
+        document.getElementById('storyLocalAudio').pause();
+
+        if (tabName === 'feed') {
+          document.getElementById('chatWindow').classList.add('hidden');
+          document.getElementById('chatWelcome').classList.add('hidden');
+          document.getElementById('feedWindow').classList.remove('hidden');
+        } else {
+          document.getElementById('feedWindow').classList.add('hidden');
+          if (APP.activeConvId) {
+            document.getElementById('chatWindow').classList.remove('hidden');
+          } else {
+            document.getElementById('chatWelcome').classList.remove('hidden');
+          }
+        }
+        renderConvList(document.getElementById('searchInput').value);
+      };
+    });
+
+    // Lắng nghe sự kiện khi người dùng gõ vào ô tìm kiếm
+    document.getElementById('searchInput').addEventListener('input', e => {
+      renderConvList(e.target.value);
+    });
+
+    // ================================================================
+    // FRIEND / CONTACTS SYSTEM
+    // ================================================================
+    window.handleAddFriend = async function (toId) {
+      await DB.sendRequest(APP.currentUser.id, toId);
+      showToast('Đã gửi lời mời kết bạn!', 'success');
+    };
+
+    window.handleAccept = async function (fromId) {
+      const req = _allRequests.find(r => r.fromId === fromId && r.toId === APP.currentUser.id && r.status === 'pending');
+      if (!req) return;
+      await DB.updateRequest(req.id, 'accepted');
+      await DB.addFriend(APP.currentUser.id, fromId);
+      const u = _allUsers.find(u => u.id === fromId);
+      showToast(`✅ Đã chấp nhận kết bạn với ${u?.name || ''}!`, 'success');
+    };
+
+    window.handleReject = async function (fromId) {
+      const req = _allRequests.find(r => r.fromId === fromId && r.toId === APP.currentUser.id && r.status === 'pending');
+      if (!req) return;
+      await DB.deleteRequest(req.id);
+      showToast('Đã từ chối lời mời.', 'info');
+    };
+
+    let unfriendTargetId = null;
+    window.openUnfriendModal = function (u) {
+      unfriendTargetId = u.id;
+      document.getElementById('unfriendName').textContent = u.name;
+      document.getElementById('unfriendAvatar').textContent = u.avatar || '👤';
+      document.getElementById('unfriendPhone').textContent = u.phone ? '📞 ' + u.phone : '';
+      document.getElementById('unfriendModal').classList.remove('hidden');
+    };
+    document.getElementById('closeUnfriendModal').onclick = () => document.getElementById('unfriendModal').classList.add('hidden');
+    document.getElementById('cancelUnfriendBtn').onclick = () => document.getElementById('unfriendModal').classList.add('hidden');
+    document.getElementById('confirmUnfriendBtn').onclick = async () => {
+      if (!unfriendTargetId) return;
+      await DB.removeFriend(APP.currentUser.id, unfriendTargetId);
+      const reqs = _allRequests.filter(r =>
+        (r.fromId === APP.currentUser.id && r.toId === unfriendTargetId) ||
+        (r.fromId === unfriendTargetId && r.toId === APP.currentUser.id)
+      );
+      for (const r of reqs) await DB.deleteRequest(r.id);
+      document.getElementById('unfriendModal').classList.add('hidden');
+      document.getElementById('rightPanel').classList.add('hidden');
+      showToast('Đã xóa khỏi danh sách bạn bè.', 'info');
+      unfriendTargetId = null;
+    };
+
+    // ================================================================
+    // CONVERSATION LIST RENDERING
+    // ================================================================
+    function renderConvList(filter = '') {
+      if (!APP.currentUser) return;
+      const convList = document.getElementById('convList');
+      convList.innerHTML = '';
+
+      const activeTab = document.querySelector('.s-tab.active')?.dataset.tab || 'chats';
+      const allUsers = _allUsers.filter(u => u.id !== APP.currentUser.id);
+      const myGroups = _allGroups.filter(g => g.members && g.members.includes(APP.currentUser.id));
+
+      if (activeTab === 'feed') {
+        convList.innerHTML = `
+        <div style="padding:20px; text-align:center; color:#6b7280;">
+          <i class="ti ti-news" style="font-size:32px; color:#0068ff;"></i>
+          <h4 style="margin-top:10px; color:#172033;">Góc sinh viên DNU</h4>
+          <p style="font-size:12px; margin-top:4px;">Bạn đang xem không gian chung của lớp CNTT1808.</p>
+        </div>
+      `;
+        return;
+      }
+
+      if (activeTab === 'groups') {
+        myGroups.filter(g => !filter || g.name.toLowerCase().includes(filter.toLowerCase()))
+          .forEach(g => convList.appendChild(createConvItem(g.id, g.name, '👥', g.lastMsg || 'Chưa có tin nhắn', g.lastTime, 'group', g)));
+        if (!myGroups.length) convList.innerHTML = '<div class="empty-list"><i class="ti ti-users-group"></i><p>Chưa có nhóm nào</p></div>';
+        return;
+      }
+
+      if (activeTab === 'contacts') {
+        const friends = allUsers.filter(u => _friendIds.includes(u.id) && (!filter || (u.name && u.name.toLowerCase().includes(filter.toLowerCase()))));
+        if (!friends.length) {
+          convList.innerHTML = '<div class="empty-list"><i class="ti ti-users"></i><p>Chưa có bạn bè nào</p></div>';
+          return;
+        }
+        friends.forEach(u => {
+          const convId = getConvId(APP.currentUser.id, u.id);
+          convList.appendChild(createConvItem(convId, u.name, u.avatar, 'Nhấn để chat', 0, 'dm', u));
+        });
+        return;
+      }
+
+      if (activeTab === 'requests') {
+        renderFindTab(filter);
+        return;
+      }
+
+      if (activeTab === 'chats' && filter) {
+        // 1. Lọc cuộc trò chuyện (Bạn bè & Nhóm) tương thích
+        const matchingFriends = allUsers.filter(u => _friendIds.includes(u.id) && (u.name && u.name.toLowerCase().includes(filter.toLowerCase())));
+        const matchingGroups = myGroups.filter(g => g.name.toLowerCase().includes(filter.toLowerCase()));
+
+        const allItems = [];
+        matchingFriends.forEach(u => {
+          const convId = getConvId(APP.currentUser.id, u.id);
+          allItems.push({ convId, name: u.name, avatar: u.avatar, lastMsg: '', lastTime: 0, type: 'dm', target: u });
+        });
+        matchingGroups.forEach(g => {
+          allItems.push({ convId: g.id, name: g.name, avatar: '👥', lastMsg: g.lastMsg || '', lastTime: g.lastTime || 0, type: 'group', target: g });
+        });
+
+        // Hiển thị phần cuộc trò chuyện
+        if (allItems.length > 0) {
+          const sectionHeader = document.createElement('div');
+          sectionHeader.className = 'find-section-title';
+          sectionHeader.innerHTML = `<i class="ti ti-message"></i> Cuộc trò chuyện & Bạn bè`;
+          convList.appendChild(sectionHeader);
+
+          allItems.forEach(item => {
+            convList.appendChild(createConvItem(item.convId, item.name, item.avatar, item.lastMsg || 'Nhấn để chat', item.lastTime, item.type, item.target));
+          });
+        }
+
+        // 2. Lọc người khác (chưa kết bạn) bằng Tên hoặc SDT
+        const matchingOthers = allUsers.filter(u => !_friendIds.includes(u.id) && ((u.name && u.name.toLowerCase().includes(filter.toLowerCase())) || (u.phone && u.phone.includes(filter))));
+
+        if (matchingOthers.length > 0) {
+          const sectionHeader = document.createElement('div');
+          sectionHeader.className = 'find-section-title';
+          sectionHeader.style.marginTop = '15px';
+          sectionHeader.innerHTML = `<i class="ti ti-search"></i> Người dùng khác trên hệ thống`;
+          convList.appendChild(sectionHeader);
+
+          matchingOthers.forEach(u => {
+            let state = 'none';
+            if (hasPendingRequestTo(u.id)) state = 'sent';
+            else if (hasPendingRequestFrom(u.id)) state = 'incoming';
+            convList.appendChild(createFindItem(u, state));
+          });
+        }
+
+        if (allItems.length === 0 && matchingOthers.length === 0) {
+          convList.innerHTML = '<div class="empty-list"><i class="ti ti-search"></i><p>Không tìm thấy kết quả</p></div>';
+        }
+        return;
+      }
+
+      const friendUsers = allUsers.filter(u => _friendIds.includes(u.id) && (!filter || (u.name && u.name.toLowerCase().includes(filter.toLowerCase()))));
+      const allItems = [];
+      friendUsers.forEach(u => {
+        const convId = getConvId(APP.currentUser.id, u.id);
+        allItems.push({ convId, name: u.name, avatar: u.avatar, lastMsg: '', lastTime: 0, type: 'dm', target: u });
+      });
+      myGroups.filter(g => !filter || g.name.toLowerCase().includes(filter.toLowerCase())).forEach(g => {
+        allItems.push({ convId: g.id, name: g.name, avatar: '👥', lastMsg: g.lastMsg || '', lastTime: g.lastTime || 0, type: 'group', target: g });
+      });
+      allItems.sort((a, b) => (b.lastTime || 0) - (a.lastTime || 0));
+      if (!allItems.length) {
+        convList.innerHTML = '<div class="empty-list"><i class="ti ti-brand-telegram"></i><p>Chưa có cuộc trò chuyện nào</p></div>';
+        return;
+      }
+      allItems.forEach(item => convList.appendChild(createConvItem(item.convId, item.name, item.avatar, item.lastMsg || 'Nhấn để bắt đầu chat', item.lastTime, item.type, item.target)));
+    }
+
+    function renderFindTab(filter = '') {
+      const convList = document.getElementById('convList');
+      const myId = APP.currentUser.id;
+      const allUsers = _allUsers.filter(u => u.id !== myId);
+      const incoming = _allRequests.filter(r => r.toId === myId && r.status === 'pending');
+      const outgoing = _allRequests.filter(r => r.fromId === myId && r.status === 'pending');
+      convList.innerHTML = '';
+
+      if (incoming.length > 0) {
+        const section = document.createElement('div');
+        section.className = 'find-section-title';
+        section.innerHTML = `<i class="ti ti-bell"></i> Lời mời kết bạn đến (${incoming.length})`;
+        convList.appendChild(section);
+        incoming.forEach(req => {
+          const u = allUsers.find(u => u.id === req.fromId);
+          if (u) convList.appendChild(createFindItem(u, 'incoming'));
+        });
+      }
+
+      if (outgoing.length > 0) {
+        const section = document.createElement('div');
+        section.className = 'find-section-title';
+        section.innerHTML = `<i class="ti ti-send"></i> Lời mời đã gửi (${outgoing.length})`;
+        convList.appendChild(section);
+        outgoing.forEach(req => {
+          const u = allUsers.find(u => u.id === req.toId);
+          if (u) convList.appendChild(createFindItem(u, 'sent'));
+        });
+      }
+
+      if (!filter) {
+        if (incoming.length === 0 && outgoing.length === 0) {
+          convList.innerHTML = '<div class="empty-list"><i class="ti ti-bell-off"></i><p>Không có lời mời kết bạn nào.</p></div>';
+        }
+        return;
+      }
+
+      const suggestions = allUsers.filter(u => {
+        const matched = (u.name && u.name.toLowerCase().includes(filter.toLowerCase())) || (u.phone && u.phone.includes(filter));
+        return matched && !_friendIds.includes(u.id) && !incoming.some(r => r.fromId === u.id) && !outgoing.some(r => r.toId === u.id);
+      });
+
+      if (suggestions.length > 0) {
+        const section = document.createElement('div');
+        section.className = 'find-section-title';
+        section.innerHTML = `<i class="ti ti-search"></i> Kết quả tìm kiếm`;
+        convList.appendChild(section);
+        suggestions.forEach(u => convList.appendChild(createFindItem(u, 'none')));
+      }
+
+      if (incoming.length === 0 && outgoing.length === 0 && suggestions.length === 0) {
+        convList.innerHTML = '<div class="empty-list"><i class="ti ti-search"></i><p>Không có kết quả tìm kiếm.</p></div>';
+      }
+    }
+
+    function createFindItem(u, state) {
+      const div = document.createElement('div');
+      div.className = 'find-item';
+      let actionHtml = '';
+      if (state === 'friend') {
+        actionHtml = `<div class="find-actions"><button class="find-btn friend-btn" onclick="openUnfriendModal(window._fu_${u.id})"><i class="ti ti-user-check"></i><span class="fb-label-hover">Xóa bạn</span></button></div>`;
+      } else if (state === 'sent') {
+        actionHtml = `<div class="find-actions"><button class="find-btn sent-btn" disabled><i class="ti ti-clock"></i>Đã gửi</button></div>`;
+      } else if (state === 'incoming') {
+        actionHtml = `<div class="find-actions"><button class="find-btn accept-btn" onclick="handleAccept('${u.id}')">Chấp nhận</button></div>`;
+      } else {
+        actionHtml = `<div class="find-actions"><button class="find-btn add-btn" onclick="handleAddFriend('${u.id}')"><i class="ti ti-user-plus"></i>Thêm</button></div>`;
+      }
+      const online = isOnline(u.id);
+      div.innerHTML = `
+      <div class="find-avatar">${u.avatar}<span class="conv-dot ${online ? 'online' : 'offline'}"></span></div>
+      <div class="find-info">
+        <div class="find-name">${u.name}</div>
+        <div class="find-phone">${u.phone}</div>
+      </div>
+      ${actionHtml}
+    `;
+      window['_fu_' + u.id] = u;
+      return div;
+    }
+
+    function createConvItem(convId, name, avatar, lastMsg, lastTime, type, target = null) {
+      const div = document.createElement('div');
+      div.className = 'conv-item' + (convId === APP.activeConvId ? ' active' : '');
+      div.dataset.id = convId;
+      const timeStr = lastTime ? formatTime(lastTime) : '';
+      const truncated = (lastMsg || '').length > 25 ? lastMsg.slice(0, 25) + '...' : lastMsg;
+      const _online = type !== 'group' && target?.id ? isOnline(target.id) : false;
+      div.innerHTML = `
+      <div class="conv-avatar">${avatar}<span class="conv-dot ${type === 'group' ? 'group' : _online ? 'online' : 'offline'}"></span></div>
+      <div class="conv-info">
+        <div class="conv-name">${name}</div>
+        <div class="conv-last">${escapeHtml(truncated)}</div>
+      </div>
+      <div class="conv-meta"><span class="conv-time">${timeStr}</span></div>
+    `;
+      div.onclick = () => openConversation(convId, name, avatar, type, target);
+      return div;
+    }
+
+    // ================================================================
+    // OPEN CONVERSATION (CHAT ROOMS)
+    // ================================================================
+    function openConversation(convId, name, avatar, type, target) {
+      if (_msgUnsubscribe) { _msgUnsubscribe(); _msgUnsubscribe = null; }
+
+      APP.activeConvId = convId;
+      APP.activeConvType = type;
+      APP.activeConvTarget = target;
+
+      document.getElementById('chatWelcome').classList.add('hidden');
+      document.getElementById('feedWindow').classList.add('hidden');
+      document.getElementById('chatWindow').classList.remove('hidden');
+      document.getElementById('chatName').textContent = name;
+      document.getElementById('chatAvatar').textContent = avatar;
+
+      const _chatOnline = target?.id ? isOnline(target.id) : false;
+      document.getElementById('chatStatus').textContent = type === 'group'
+        ? (target?.members?.length || 0) + ' thành viên'
+        : _chatOnline ? '🟢 Đang hoạt động' : '⚫ Ngoại tuyến';
+
+      document.querySelectorAll('.conv-item').forEach(el => el.classList.remove('active'));
+      const el = document.querySelector(`.conv-item[data-id="${convId}"]`);
+      if (el) el.classList.add('active');
+
+      renderMessages(convId);
+
+      let firstLoad = true;
+      _msgUnsubscribe = DB.listenMessages(convId, msg => {
+        if (firstLoad) return;
+        const area = document.getElementById('messagesArea');
+        if (area.querySelector(`.msg-row[data-id="${msg.id}"]`)) return;
+
+        const noMsg = area.querySelector('.no-msgs');
+        if (noMsg) noMsg.remove();
+        area.appendChild(createMsgEl(msg));
+        area.scrollTop = area.scrollHeight;
+      });
+
+      document.getElementById('msgInput').focus();
+      setTimeout(() => { firstLoad = false; }, 500);
+    }
+
+    async function renderMessages(convId) {
+      const area = document.getElementById('messagesArea');
+      area.innerHTML = '<div class="no-msgs"><i class="ti ti-loader" style="animation:spin 1s linear infinite"></i><p>Đang tải...</p></div>';
+      const msgs = await DB.getMessages(convId);
+      area.innerHTML = '';
+      if (!msgs.length) {
+        area.innerHTML = '<div class="no-msgs"><i class="ti ti-brand-telegram"></i><p>Hãy gửi tin nhắn đầu tiên!</p></div>';
+        return;
+      }
+      const seenIds = new Set();
+      const uniqueMsgs = [];
+      msgs.forEach(m => {
+        if (!m || !m.id) return;
+        if (seenIds.has(m.id)) return;
+        seenIds.add(m.id);
+        uniqueMsgs.push(m);
+      });
+      uniqueMsgs.forEach(m => area.appendChild(createMsgEl(m)));
+      area.scrollTop = area.scrollHeight;
+    }
+
+    function createMsgEl(msg) {
+      const isMine = msg.senderId === APP.currentUser.id;
+      const div = document.createElement('div');
+      div.className = 'msg-row ' + (isMine ? 'mine' : 'theirs');
+      div.dataset.id = msg.id;
+
+      let content = '';
+      if (msg.type === 'text') content = `<div class="msg-bubble">${escapeHtml(msg.text)}</div>`;
+      else if (msg.type === 'sticker') content = `<div class="msg-sticker">${msg.text}</div>`;
+      else if (msg.type === 'image') content = `<div class="msg-bubble msg-img"><img src="${msg.text}" alt="ảnh" onclick="window.open('${msg.text}')" /></div>`;
+      else if (msg.type === 'file') content = `<div class="msg-bubble msg-file"><i class="ti ti-file"></i><a href="${msg.text}" target="_blank">${msg.fileName || 'File'}</a></div>`;
+      else if (msg.type === 'voice') content = `<div class="msg-bubble msg-voice"><i class="ti ti-microphone"></i><audio controls src="${msg.text}"></audio></div>`;
+      else if (msg.type === 'call') content = `<div class="msg-bubble msg-call"><i class="ti ti-${msg.callType === 'video' ? 'video' : 'phone'}"></i> ${msg.text}</div>`;
+
+      const timeStr = formatTime(msg.time);
+      const sender = _allUsers.find(u => u.id === msg.senderId);
+
+      div.innerHTML = `
+      ${!isMine ? `<div class="msg-avatar">${sender?.avatar || '?'}</div>` : ''}
+      <div class="msg-content">
+        ${!isMine && APP.activeConvType === 'group' ? `<div class="msg-sender-name">${sender?.name || ''}</div>` : ''}
+        ${content}
+        <div class="msg-meta">
+          <span class="msg-time">${timeStr}</span>
+        </div>
+      </div>
+    `;
+      return div;
+    }
+
+    async function sendMessage(type, text, extra = {}) {
+      if (!APP.activeConvId) return;
+      const msg = {
+        id: 'm_' + Date.now(),
+        senderId: APP.currentUser.id,
+        type,
+        text,
+        time: Date.now(),
+        ...extra
+      };
+      await DB.saveMessage(APP.activeConvId, msg);
+
+      if (APP.activeConvType === 'group') {
+        await DB.updateGroup(APP.activeConvId, {
+          lastMsg: type === 'sticker' ? '(Sticker)' : type === 'image' ? '(Ảnh)' : type === 'voice' ? '(Ghi âm)' : text,
+          lastTime: Date.now()
+        });
+      }
+
+      // Tuyệt đối không còn đoạn setTimeout phản hồi của bot ở đây
+    }
+
+    document.getElementById('sendBtn').onclick = doSend;
+    document.getElementById('msgInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); doSend(); }
+    });
+    function doSend() {
+      const input = document.getElementById('msgInput');
+      const text = input.value.trim();
+      if (!text || !APP.activeConvId) return;
+      sendMessage('text', text);
+      input.value = '';
+    }
+
+    document.getElementById('imageBtn').onclick = () => document.getElementById('imageInput').click();
+    document.getElementById('imageInput').onchange = function () {
+      const file = this.files[0]; if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => sendMessage('image', e.target.result);
+      reader.readAsDataURL(file);
+      this.value = '';
+    };
+
+    // ================================================================
+    // STICKERS SYSTEM
+    // ================================================================
+    const STICKERS = {
+      emoji: ['😀', '😂', '🥹', '😍', '🥰', '😎', '🤩', '😴', '😭', '😡', '😱', '🤔', '😏', '🥳', '🤗', '😇', '🤓', '😬', '🫡', '🫶'],
+      animals: ['🐱', '🐶', '🐼', '🦊', '🐨', '🦁', '🐯', '🐸', '🐙', '🦋', '🦄', '🐬', '🦅', '🦜', '🐝', '🦊', '🐻', '🦝', '🦔', '🦦'],
+      food: ['🍜', '🍣', '🍕', '🍔', '🌮', '🍩', '🎂', '🧋', '🍓', '🥗', '🍱', '🍛', '☕', '🍺', '🍰', '🍦', '🌯', '🥤', '🍿', '🥐'],
+      study: ['📚', '📝', '💻', '🔬', '📐', '📊', '🎓', '🏆', '💡', '📖', '✏️', '🖊️', '📌', '🗒️', '📎', '⏰', '🔭', '🧮', '📡', '🗺️'],
+      feelings: ['❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '💔', '💕', '💞', '💝', '🔥', '✨', '💯', '🎉', '🌈', '⚡', '🌟', '🎊', '💫'],
+    };
+    const stickerPicker = document.getElementById('stickerPicker');
+    const stickerGrid = document.getElementById('stickerGrid');
+    document.getElementById('stickerBtn').onclick = e => { e.stopPropagation(); stickerPicker.classList.toggle('hidden'); renderStickers('emoji'); };
+    document.getElementById('closeStickerBtn').onclick = () => stickerPicker.classList.add('hidden');
+    document.querySelectorAll('.stk-tab').forEach(tab => {
+      tab.onclick = function () {
+        document.querySelectorAll('.stk-tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active'); renderStickers(this.dataset.cat);
+      };
+    });
+    function renderStickers(cat) {
+      stickerGrid.innerHTML = '';
+      STICKERS[cat].forEach(s => {
+        const btn = document.createElement('button'); btn.className = 'sticker-item'; btn.textContent = s;
+        btn.onclick = () => { sendMessage('sticker', s); stickerPicker.classList.add('hidden'); };
+        stickerGrid.appendChild(btn);
+      });
+    }
+
+    // ================================================================
+    // BACKUP ADMIN LIST MANAGEMENT
+    // ================================================================
+    function renderBackupList() {
+      const listEl = document.getElementById('backupUserList');
+      listEl.innerHTML = '';
+      _allUsers.forEach((u, idx) => {
+        const online = isOnline(u.id);
+        const row = document.createElement('div');
+        row.className = 'backup-user-row';
+        row.innerHTML = `
+        <div class="backup-rank">${idx + 1}</div>
+        <div class="backup-avatar">${u.avatar}</div>
+        <div class="backup-info">
+          <div class="backup-name">${u.name}</div>
+          <div class="backup-phone">${u.phone}</div>
+        </div>
+        <div class="backup-right">
+          <div class="backup-status ${online ? 'online' : 'offline'}">${online ? '🟢 Online' : '⚫ Offline'}</div>
+        </div>
+      `;
+        listEl.appendChild(row);
+      });
+    }
+
+
+    function showNewUserNotification(u) {
+      const toast = document.getElementById('newUserToast');
+      document.getElementById('newUserToastName').textContent = `${u.avatar} ${u.name}`;
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 5000);
+    }
+
+    document.getElementById('backBtn').onclick = () => {
+      document.getElementById('chatWindow').classList.add('hidden');
+      document.getElementById('chatWelcome').classList.remove('hidden');
+      APP.activeConvId = null;
+    };
+
+    // ================================================================
+    // HỆ THỐNG GỌI AUDIO/VIDEO (WebRTC + Firebase Signaling)
+    // ================================================================
+    // TURN server miễn phí đáng tin cậy cho 2 thiết bị khác mạng
+    const ICE_CONFIG = {
+      iceTransportPolicy: 'all',
+      iceServers: [
+        { urls: 'stun:stun.relay.metered.ca:80' },
+        {
+          urls: 'turn:global.relay.metered.ca:80',
+          username: '37748e6d1e564a617331c7b8',
+          credential: 'QpABUCd531Y07Y7t',
+        },
+        {
+          urls: 'turn:global.relay.metered.ca:80?transport=tcp',
+          username: '37748e6d1e564a617331c7b8',
+          credential: 'QpABUCd531Y07Y7t',
+        },
+        {
+          urls: 'turn:global.relay.metered.ca:443',
+          username: '37748e6d1e564a617331c7b8',
+          credential: 'QpABUCd531Y07Y7t',
+        },
+        {
+          urls: 'turns:global.relay.metered.ca:443?transport=tcp',
+          username: '37748e6d1e564a617331c7b8',
+          credential: 'QpABUCd531Y07Y7t',
+        },
+      ]
+    };
+
+    let _localStream = null;   // MediaStream cục bộ
+    let _peerConn = null;   // RTCPeerConnection
+    let _callTimerInt = null;   // setInterval đếm giây
+    let _callSecs = 0;      // Số giây đã gọi
+    let _callData = null;   // { callId, call, role }
+    let _micMuted = false;
+    let _camOff = false;
+    let _screenStream = null;
+    let _iceCandidateQ = [];     // Hàng đợi ICE khi remoteDesc chưa set
+
+    // ── Nút gọi từ header chat ────────────────────────────────
+    document.getElementById('voiceCallBtn').onclick = () => initiateCall('voice');
+    document.getElementById('videoCallBtn').onclick = () => initiateCall('video');
+
+    async function initiateCall(type) {
+      if (APP.activeConvType !== 'dm' || !APP.activeConvTarget?.id) {
+        showToast('Chỉ có thể gọi trong cuộc trò chuyện 1-1!', 'error');
+        return;
+      }
+      if (_callData) { showToast('Bạn đang trong cuộc gọi khác!', 'error'); return; }
+
+      const toUser = APP.activeConvTarget;
+      showCallModal(type, toUser.avatar, toUser.name, 'Đang đổ chuông...', type === 'voice');
+
+      let localOk = await startLocalMedia(type);
+      if (!localOk) { hideCallModal(); return; }
+
+      // Tạo peer connection TRƯỚC, gán onicecandidate tạm (buffer)
+      _peerConn = createPeer();
+      _localStream.getTracks().forEach(t => _peerConn.addTrack(t, _localStream));
+
+      // Buffer ICE candidates cho đến khi có callId
+      const pendingCandidates = [];
+      _peerConn.onicecandidate = e => {
+        if (e.candidate) pendingCandidates.push(e.candidate.toJSON());
+      };
+
+      const offer = await _peerConn.createOffer();
+      await _peerConn.setLocalDescription(offer);
+
+      // Đẩy call lên Firebase
+      const callId = await DB.createCall({
+        fromId: APP.currentUser.id,
+        toId: toUser.id,
+        type,
+        status: 'ringing',
+        offer: { type: offer.type, sdp: offer.sdp },
+        time: Date.now()
+      });
+
+      _callData = { callId, call: { fromId: APP.currentUser.id, toId: toUser.id, type }, role: 'caller' };
+
+      // Giờ đã có callId, flush các ICE đã buffer và gán lại handler thật
+      for (const c of pendingCandidates) DB.pushIceCandidate(callId, 'caller', c);
+      _peerConn.onicecandidate = e => {
+        if (e.candidate) DB.pushIceCandidate(callId, 'caller', e.candidate.toJSON());
+      };
+
+      // Nghe trả lời từ callee
+      DB.listenCall(callId, async data => {
+        if (!data || !_peerConn) return;
+
+        if (data.status === 'rejected') {
+          showToast('Cuộc gọi bị từ chối.', 'info');
+          await _cleanupCall(false); return;
+        }
+        if (data.status === 'ended' && _callData) {
+          await _cleanupCall(true); return;
+        }
+        if (data.answer && _peerConn.signalingState !== 'stable' && _peerConn.remoteDescription === null) {
+          try {
+            await _peerConn.setRemoteDescription(new RTCSessionDescription(data.answer));
+            await _flushIceCandidates();
+            // _onConnected sẽ tự được gọi khi connectionState === 'connected'
+          } catch (e) { console.warn('setRemoteDescription error', e); }
+        }
+      });
+
+      // Nghe ICE candidates từ callee
+      DB.listenIceCandidates(callId, 'callee', async c => {
+        if (!_peerConn) return;
+        if (_peerConn.remoteDescription) {
+          try { await _peerConn.addIceCandidate(new RTCIceCandidate(c)); } catch (e) { }
+        } else {
+          _iceCandidateQ.push(c);
+        }
+      });
+    }
+
+    // ── Lắng nghe cuộc gọi đến ───────────────────────────────
+    let _listenedCallIds = new Set();
+    function listenIncomingCalls() {
+      onValue(ref(db, 'calls'), snap => {
+        if (!snap.exists() || !APP.currentUser) return;
+        snap.forEach(child => {
+          const callId = child.key;
+          const call = child.val();
+          if (call.toId !== APP.currentUser.id) return;
+          if (call.status !== 'ringing') return;
+          if (_listenedCallIds.has(callId)) return;
+          _listenedCallIds.add(callId);
+          _showIncomingCall(callId, call);
+        });
+      });
+    }
+
+    function _showIncomingCall(callId, call) {
+      const caller = _allUsers.find(u => u.id === call.fromId);
+      document.getElementById('incomingAvatar').textContent = caller?.avatar || '?';
+      document.getElementById('incomingName').textContent = caller?.name || 'Không rõ';
+      document.getElementById('incomingType').textContent = call.type === 'video' ? '📹 Cuộc gọi video' : '📞 Cuộc gọi thoại';
+      document.getElementById('incomingCall').classList.remove('hidden');
+
+      // Tự động hủy sau 60s nếu không ai bắt máy
+      const autoReject = setTimeout(() => {
+        if (!document.getElementById('incomingCall').classList.contains('hidden')) {
+          document.getElementById('incomingCall').classList.add('hidden');
+        }
+      }, 60000);
+
+      document.getElementById('acceptCallBtn').onclick = async () => {
+        clearTimeout(autoReject);
+        document.getElementById('incomingCall').classList.add('hidden');
+        await _answerCall(callId, call);
+      };
+      document.getElementById('rejectCallBtn').onclick = async () => {
+        clearTimeout(autoReject);
+        document.getElementById('incomingCall').classList.add('hidden');
+        await DB.updateCall(callId, { status: 'rejected' });
+      };
+    }
+
+    async function _answerCall(callId, call) {
+      if (_callData) { showToast('Bạn đang trong cuộc gọi khác!', 'error'); return; }
+
+      const caller = _allUsers.find(u => u.id === call.fromId);
+      showCallModal(call.type, caller?.avatar || '?', caller?.name || '?', 'Đang kết nối...', call.type === 'voice');
+
+      const localOk = await startLocalMedia(call.type);
+      if (!localOk) { hideCallModal(); return; }
+
+      _callData = { callId, call, role: 'callee' };
+      _peerConn = createPeer();
+      _localStream.getTracks().forEach(t => _peerConn.addTrack(t, _localStream));
+
+      // Buffer ICE candidates trước khi có remote description
+      const pendingCalleeCandidates = [];
+      _peerConn.onicecandidate = e => {
+        if (e.candidate) DB.pushIceCandidate(callId, 'callee', e.candidate.toJSON());
+      };
+
+      // Lấy offer từ Firebase
+      const callSnap = await DB.getCall(callId);
+      if (!callSnap?.offer) { showToast('Không tìm thấy dữ liệu cuộc gọi!', 'error'); hideCallModal(); return; }
+
+      await _peerConn.setRemoteDescription(new RTCSessionDescription(callSnap.offer));
+      await _flushIceCandidates();
+
+      const answer = await _peerConn.createAnswer();
+      await _peerConn.setLocalDescription(answer);
+      await DB.updateCall(callId, { answer: { type: answer.type, sdp: answer.sdp }, status: 'connected' });
+
+      // Nghe ICE candidates từ caller (với queue đúng cách)
+      DB.listenIceCandidates(callId, 'caller', async c => {
+        if (!_peerConn) return;
+        if (_peerConn.remoteDescription) {
+          try { await _peerConn.addIceCandidate(new RTCIceCandidate(c)); } catch (e) { }
+        } else {
+          _iceCandidateQ.push(c);
+        }
+      });
+
+      // Nghe khi caller kết thúc
+      DB.listenCall(callId, async data => {
+        if (data?.status === 'ended' && _callData) await _cleanupCall(false);
+      });
+    }
+
+    // ── Tạo RTCPeerConnection ─────────────────────────────────
+    function createPeer() {
+      const pc = new RTCPeerConnection(ICE_CONFIG);
+
+      // Khi nhận track từ đầu kia
+      pc.ontrack = e => {
+        console.log('[WebRTC] ontrack:', e.track.kind, e.streams);
+        const remVid = document.getElementById('remoteVideo');
+        if (remVid && e.streams[0]) {
+          remVid.srcObject = e.streams[0];
+          remVid.play().catch(err => console.warn('[WebRTC] remoteVideo.play():', err));
+          // Ẩn placeholder khi có video thật
+          document.getElementById('remotePlaceholder').style.display = 'none';
+        }
+      };
+
+      pc.onconnectionstatechange = () => {
+        console.log('[WebRTC] connectionState:', pc.connectionState);
+        if (pc.connectionState === 'connected') {
+          _setConnBadge('connected');
+          if (_callData && !_callTimerInt) _onConnected(_callData.callId);
+        }
+        if (pc.connectionState === 'connecting') _setConnBadge('connecting');
+        if (['disconnected', 'failed', 'closed'].includes(pc.connectionState)) {
+          _setConnBadge('failed');
+          setTimeout(() => _cleanupCall(true), 1500);
+        }
+      };
+
+      pc.oniceconnectionstatechange = () => {
+        console.log('[WebRTC] iceConnectionState:', pc.iceConnectionState);
+        if (pc.iceConnectionState === 'connected' || pc.iceConnectionState === 'completed') {
+          _setConnBadge('connected');
+        }
+        if (pc.iceConnectionState === 'failed') {
+          // Thử restart ICE khi thất bại
+          console.warn('[WebRTC] ICE failed – restarting...');
+          pc.restartIce?.();
+        }
+      };
+
+      // Log ICE gathering
+      pc.onicegatheringstatechange = () => {
+        console.log('[WebRTC] iceGatheringState:', pc.iceGatheringState);
+      };
+
+      return pc;
+    }
+
+    async function startLocalMedia(type) {
+      try {
+        // Yêu cầu quyền camera/mic với constraints phù hợp
+        const constraints = type === 'video'
+          ? { video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: 'user' }, audio: { echoCancellation: true, noiseSuppression: true } }
+          : { audio: { echoCancellation: true, noiseSuppression: true }, video: false };
+
+        _localStream = await navigator.mediaDevices.getUserMedia(constraints);
+
+        if (type === 'video') {
+          const locVid = document.getElementById('localVideo');
+          locVid.srcObject = _localStream;
+          await locVid.play().catch(e => console.warn('localVideo.play:', e));
+          document.getElementById('localVideoWrap').style.display = 'flex';
+        } else {
+          document.getElementById('localVideoWrap').style.display = 'none';
+        }
+        return true;
+      } catch (e) {
+        console.error('[WebRTC] getUserMedia error:', e);
+        let msg = 'Không thể truy cập microphone/camera!';
+        if (e.name === 'NotAllowedError') msg = '⛔ Bạn chưa cấp quyền camera/micro. Hãy bật quyền trong trình duyệt rồi thử lại.';
+        if (e.name === 'NotFoundError') msg = '🔌 Không tìm thấy camera/microphone trên thiết bị này.';
+        if (e.name === 'NotReadableError') msg = '⚠️ Camera/micro đang được ứng dụng khác sử dụng. Hãy đóng lại.';
+        showToast(msg, 'error');
+        return false;
+      }
+    }
+
+    async function _flushIceCandidates() {
+      for (const c of _iceCandidateQ) {
+        try { await _peerConn?.addIceCandidate(new RTCIceCandidate(c)); } catch (e) { }
+      }
+      _iceCandidateQ = [];
+    }
+
+    function _onConnected(callId) {
+      if (_callTimerInt) return;
+      document.getElementById('callStatus').textContent = '🟢 Đang kết nối';
+      // Ẩn avatar placeholder khi đã connected
+      document.getElementById('remotePlaceholder').style.display = 'none';
+      document.getElementById('callTimer').classList.remove('hidden');
+      _setConnBadge('connected');
+      _callSecs = 0;
+      _callTimerInt = setInterval(() => {
+        _callSecs++;
+        const m = String(Math.floor(_callSecs / 60)).padStart(2, '0');
+        const s = String(_callSecs % 60).padStart(2, '0');
+        document.getElementById('callTimerDisplay').textContent = `${m}:${s}`;
+      }, 1000);
+    }
+
+    // ── Kết thúc cuộc gọi ────────────────────────────────────
+    document.getElementById('endCallBtn').onclick = () => _cleanupCall(true, true);
+
+    async function _cleanupCall(saveMsg = false, byUser = false) {
+      if (_callTimerInt) { clearInterval(_callTimerInt); _callTimerInt = null; }
+
+      // Lưu tin nhắn lịch sử cuộc gọi
+      if (saveMsg && _callData && APP.activeConvId) {
+        const { call } = _callData;
+        const dur = _callSecs > 0
+          ? ` · ${String(Math.floor(_callSecs / 60)).padStart(2, '0')}:${String(_callSecs % 60).padStart(2, '0')}`
+          : ' · Không có người bắt máy';
+        const callText = (call.type === 'video' ? '📹 Cuộc gọi video' : '📞 Cuộc gọi thoại') + dur;
+        await sendMessage('call', callText, { callType: call.type });
+      }
+
+      // Đánh dấu cuộc gọi kết thúc trên Firebase
+      if (byUser && _callData?.callId) {
+        try { await DB.updateCall(_callData.callId, { status: 'ended' }); } catch (e) { }
+      }
+
+      // Dừng media streams
+      if (_screenStream) { _screenStream.getTracks().forEach(t => t.stop()); _screenStream = null; }
+      if (_localStream) { _localStream.getTracks().forEach(t => t.stop()); _localStream = null; }
+      if (_peerConn) { _peerConn.close(); _peerConn = null; }
+
+      // Reset state
+      _callData = null;
+      _callSecs = 0;
+      _micMuted = false;
+      _camOff = false;
+      _iceCandidateQ = [];
+
+      // Reset UI nút
+      document.getElementById('toggleMicBtn').querySelector('i').className = 'ti ti-microphone';
+      document.getElementById('toggleMicBtn').classList.remove('muted');
+      document.getElementById('toggleCamBtn').querySelector('i').className = 'ti ti-video';
+      document.getElementById('toggleCamBtn').classList.remove('muted');
+      document.getElementById('toggleScreenBtn').querySelector('i').className = 'ti ti-screen-share';
+      // Hiển thị lại placeholder
+      document.getElementById('remotePlaceholder').style.display = 'flex';
+
+      hideCallModal();
+    }
+
+    // ── Các nút điều khiển trong cuộc gọi ───────────────────
+    document.getElementById('toggleMicBtn').onclick = () => {
+      if (!_localStream) return;
+      _micMuted = !_micMuted;
+      _localStream.getAudioTracks().forEach(t => { t.enabled = !_micMuted; });
+      const btn = document.getElementById('toggleMicBtn');
+      btn.querySelector('i').className = _micMuted ? 'ti ti-microphone-off' : 'ti ti-microphone';
+      btn.classList.toggle('muted', _micMuted);
+      showToast(_micMuted ? '🔇 Đã tắt micro' : '🎙️ Đã bật micro', 'info');
+    };
+
+    document.getElementById('toggleCamBtn').onclick = () => {
+      if (!_localStream) return;
+      _camOff = !_camOff;
+      _localStream.getVideoTracks().forEach(t => { t.enabled = !_camOff; });
+      const btn = document.getElementById('toggleCamBtn');
+      btn.querySelector('i').className = _camOff ? 'ti ti-video-off' : 'ti ti-video';
+      btn.classList.toggle('muted', _camOff);
+      // Ẩn/hiện khung local video
+      document.getElementById('localVideoWrap').style.opacity = _camOff ? '0.4' : '1';
+      showToast(_camOff ? '📵 Đã tắt camera' : '📷 Đã bật camera', 'info');
+    };
+
+    document.getElementById('toggleScreenBtn').onclick = async () => {
+      if (_screenStream) {
+        // Dừng chia sẻ màn hình, khôi phục camera
+        _screenStream.getTracks().forEach(t => t.stop());
+        _screenStream = null;
+        if (_localStream && _peerConn) {
+          const camTrack = _localStream.getVideoTracks()[0];
+          if (camTrack) {
+            const sender = _peerConn.getSenders().find(s => s.track?.kind === 'video');
+            if (sender) await sender.replaceTrack(camTrack);
+          }
+          document.getElementById('localVideo').srcObject = _localStream;
+        }
+        document.getElementById('localVideoWrap').style.display = 'flex';
+        document.getElementById('toggleScreenBtn').querySelector('i').className = 'ti ti-screen-share';
+        showToast('Đã dừng chia sẻ màn hình.', 'info');
+        return;
+      }
+      try {
+        _screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: false });
+        const screenTrack = _screenStream.getVideoTracks()[0];
+        if (_peerConn) {
+          const sender = _peerConn.getSenders().find(s => s.track?.kind === 'video');
+          if (sender) await sender.replaceTrack(screenTrack);
+        }
+        document.getElementById('localVideo').srcObject = _screenStream;
+        document.getElementById('toggleScreenBtn').querySelector('i').className = 'ti ti-screen-share-off';
+        showToast('📺 Đang chia sẻ màn hình', 'success');
+        // Tự động dừng khi người dùng nhấn nút Stop của trình duyệt
+        screenTrack.onended = () => document.getElementById('toggleScreenBtn').click();
+      } catch (e) {
+        showToast('Không thể chia sẻ màn hình!', 'error');
+      }
+    };
+
+    // ── Helpers hiển thị/ẩn Call Modal ───────────────────────
+    function showCallModal(type, avatar, name, status, voiceOnly) {
+      // Cập nhật thông tin
+      document.getElementById('callAvatar').textContent = avatar;
+      document.getElementById('callName').textContent = name;
+      document.getElementById('callPeerName').textContent = name;
+      document.getElementById('callStatus').textContent = status;
+      document.getElementById('callTimer').classList.add('hidden');
+      document.getElementById('callTimerDisplay').textContent = '00:00';
+
+      const modal = document.getElementById('callModal');
+      modal.classList.remove('hidden', 'voice-only');
+      if (voiceOnly) modal.classList.add('voice-only');
+
+      // Badge trạng thái
+      _setConnBadge('connecting');
+
+      // Reset remote video
+      const remVid = document.getElementById('remoteVideo');
+      if (remVid) remVid.srcObject = null;
+      document.getElementById('remotePlaceholder').style.display = 'flex';
+
+      // Ẩn local video nếu chỉ gọi thoại
+      document.getElementById('localVideoWrap').style.display = voiceOnly ? 'none' : 'flex';
+    }
+
+    function hideCallModal() {
+      document.getElementById('callModal').classList.add('hidden');
+      document.getElementById('incomingCall').classList.add('hidden');
+      const locVid = document.getElementById('localVideo');
+      const remVid = document.getElementById('remoteVideo');
+      if (locVid) locVid.srcObject = null;
+      if (remVid) remVid.srcObject = null;
+      document.getElementById('remotePlaceholder').style.display = 'flex';
+    }
+
+    function _setConnBadge(state) {
+      const badge = document.getElementById('connStatusBadge');
+      const text = document.getElementById('connStatusText');
+      if (!badge) return;
+      badge.className = 'conn-status-badge ' + state;
+      const labels = { connecting: 'Đang kết nối...', connected: 'Đã kết nối', failed: 'Mất kết nối' };
+      text.textContent = labels[state] || state;
+    }
+
+    // Welcome Carousel Logic
+    document.addEventListener("DOMContentLoaded", () => {
+      let currentSlide = 0;
+      const slidesCount = 4;
+      const carouselContainer = document.getElementById('welcomeCarouselContainer');
+      const dots = document.querySelectorAll('.carousel-dot');
+
+      function showSlide(index) {
+        if (index < 0) index = slidesCount - 1;
+        if (index >= slidesCount) index = 0;
+        currentSlide = index;
+        if (carouselContainer) {
+          carouselContainer.style.transform = `translateX(-${currentSlide * 100}%)`;
+        }
+        dots.forEach((dot, idx) => {
+          if (idx === currentSlide) {
+            dot.classList.add('active');
+          } else {
+            dot.classList.remove('active');
+          }
+        });
+      }
+
+      const welcomePrevBtn = document.getElementById('welcomePrevBtn');
+      const welcomeNextBtn = document.getElementById('welcomeNextBtn');
+
+      if (welcomePrevBtn) {
+        welcomePrevBtn.onclick = () => {
+          showSlide(currentSlide - 1);
+          resetAutoSlide();
+        };
+      }
+      if (welcomeNextBtn) {
+        welcomeNextBtn.onclick = () => {
+          showSlide(currentSlide + 1);
+          resetAutoSlide();
+        };
+      }
+
+      dots.forEach((dot) => {
+        dot.onclick = () => {
+          const idx = parseInt(dot.dataset.index);
+          showSlide(idx);
+          resetAutoSlide();
+        };
+      });
+
+      let autoSlideInterval = setInterval(() => {
+        showSlide(currentSlide + 1);
+      }, 5000);
+
+      function resetAutoSlide() {
+        clearInterval(autoSlideInterval);
+        autoSlideInterval = setInterval(() => {
+          showSlide(currentSlide + 1);
+        }, 5000);
+      }
+    });
+
+    boot();
+  </script>
+</body>
+
+</html>
